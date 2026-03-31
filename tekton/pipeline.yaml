@@ -9,7 +9,7 @@ spec:
   params:
     - name: repo-url
       type: string
-      default: "https://github.com/ThysmaJS/AuthentApp_K3S.git" # <-- Remplace par la vraie URL de ton code si besoin !
+      default: "https://github.com/ThysmaJS/AuthentApp_K3S.git"
     - name: image-reference
       type: string
       default: "thysma/authent-app:1.0.0"
@@ -34,14 +34,31 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-        - name: dockerconfig        # <--- On ajoute ce workspace
-          workspace: shared-workspace
       params:
         - name: IMAGE
           value: $(params.image-reference)
         - name: DOCKERFILE
           value: "./Dockerfile"
-      stepTemplate:
-        env:
-          - name: DOCKER_CONFIG
-            value: /tekton/creds-/.docker
+      # Cette section force Kaniko à utiliser le dossier de credentials injecté par Tekton
+      taskSpec:
+        params:
+          - name: IMAGE
+          - name: DOCKERFILE
+        workspaces:
+          - name: source
+        steps:
+          - name: build-and-push
+            image: gcr.io/kaniko-project/executor:latest
+            env:
+              - name: DOCKER_CONFIG
+                value: /tekton/creds-/.docker
+            command:
+              - /kaniko/executor
+            args:
+              - --dockerfile=$(params.DOCKERFILE)
+              - --context=$(workspaces.source.path)
+              - --destination=$(params.IMAGE)
+              - --digest-file=$(results.IMAGE_DIGEST.path)
+        results:
+          - name: IMAGE_DIGEST
+            description: Digest of the image just built.
