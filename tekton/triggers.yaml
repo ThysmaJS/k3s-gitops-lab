@@ -75,6 +75,9 @@ metadata:
   namespace: tekton-ci
 spec:
   serviceAccountName: tekton-builder
+  resources:
+    kubernetesResource:
+      serviceType: NodePort    # <-- C'est ici qu'on demande à Tekton d'ouvrir la porte !
   triggers:
   - bindings:
     - ref: github-binding
