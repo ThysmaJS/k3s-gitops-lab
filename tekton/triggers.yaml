@@ -93,6 +93,10 @@ spec:
             resources:
               requests:
                 storage: 1Gi
+      # AJOUTE CE BLOC ICI :
+      - name: dockerconfig
+        secret:
+          secretName: dockerhub-secret
 
 ---
 # 4. L'EventListener : L'antenne qui écoute

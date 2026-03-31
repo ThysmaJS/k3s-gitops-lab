@@ -34,8 +34,7 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-        # On ajoute ce workspace spécial que la task Kaniko utilise pour l'auth
-        - name: dockerconfig
+        - name: dockerconfig        # <--- On ajoute ce workspace
           workspace: shared-workspace
       params:
         - name: IMAGE
