@@ -41,3 +41,20 @@ spec:
           value: $(params.image-reference)
         - name: DOCKERFILE
           value: "./Dockerfile"
+- name: build-image
+      taskRef:
+        name: kaniko
+      runAfter:
+        - fetch-repository
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: $(params.image-reference)
+        - name: DOCKERFILE
+          value: "./Dockerfile"
+      stepTemplate:
+        env:
+          - name: DOCKER_CONFIG
+            value: /tekton/creds-/.docker
