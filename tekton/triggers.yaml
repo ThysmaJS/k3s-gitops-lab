@@ -1,0 +1,82 @@
+# 1. On donne le droit au ServiceAccount de créer des PipelineRuns
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tekton-triggers-role
+  namespace: tekton-ci
+rules:
+- apiGroups: ["tekton.dev"]
+  resources: ["pipelineruns"]
+  verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-triggers-binding
+  namespace: tekton-ci
+subjects:
+- kind: ServiceAccount
+  name: tekton-builder
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: tekton-triggers-role
+
+---
+# 2. Le Binding : On extrait l'URL du dépôt depuis le message de GitHub
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: github-binding
+  namespace: tekton-ci
+spec:
+  params:
+  - name: gitrepositoryurl
+    value: $(body.repository.clone_url)
+
+---
+# 3. Le Template : On lance la pipeline avec l'URL récupérée
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: authent-app-template
+  namespace: tekton-ci
+spec:
+  params:
+  - name: gitrepositoryurl
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: github-run-authent-app-
+      namespace: tekton-ci
+    spec:
+      pipelineRef:
+        name: build-authent-app
+      serviceAccountName: tekton-builder
+      params:
+      - name: repo-url
+        value: $(tt.params.gitrepositoryurl)
+      workspaces:
+      - name: shared-workspace
+        volumeClaimTemplate:
+          spec:
+            accessModes: [ReadWriteOnce]
+            resources:
+              requests:
+                storage: 1Gi
+
+---
+# 4. L'EventListener : L'antenne qui écoute
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: github-listener
+  namespace: tekton-ci
+spec:
+  serviceAccountName: tekton-builder
+  triggers:
+  - binding:
+      ref: github-binding
+    template:
+      ref: authent-app-template

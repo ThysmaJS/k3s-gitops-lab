@@ -1,0 +1,41 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-authent-app
+  namespace: tekton-ci
+spec:
+  workspaces:
+    - name: shared-workspace
+  params:
+    - name: repo-url
+      type: string
+      default: "https://github.com/ThysmaJS/AuthentApp_K3S.git" # <-- Remplace par la vraie URL de ton code si besoin !
+    - name: image-reference
+      type: string
+      default: "thysma/authent-app:1.0.0"
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: deleteExisting
+          value: "true"
+          
+    - name: build-image
+      taskRef:
+        name: kaniko
+      runAfter:
+        - fetch-repository
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: $(params.image-reference)
+        - name: DOCKERFILE
+          value: "./Dockerfile"
