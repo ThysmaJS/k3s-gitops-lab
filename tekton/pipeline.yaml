@@ -37,11 +37,13 @@ spec:
           value: $(params.image-reference)
         - name: DOCKERFILE
           value: "./Dockerfile"
-      # On définit la tâche directement ici pour forcer l'auth Docker
+      # On définit la tâche directement ici (SANS taskRef) pour forcer l'authentification
       taskSpec:
         params:
           - name: IMAGE
+            type: string
           - name: DOCKERFILE
+            type: string
         workspaces:
           - name: source
         results:
