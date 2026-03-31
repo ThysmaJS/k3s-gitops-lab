@@ -1,0 +1,63 @@
+# ===== Déploiement de l'application AuthentApp =====
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authent-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: authent-app
+  template:
+    metadata:
+      labels:
+        app: authent-app
+    spec:
+      containers:
+      - name: authent-app
+        image: thysma/authent-app:1.0.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: MONGO_INITDB_ROOT_USERNAME
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: MONGO_INITDB_ROOT_PASSWORD
+        - name: MONGO_HOST
+          value: mongodb-service
+        - name: MONGO_PORT
+          value: "27017"
+        - name: MONGO_DB
+          value: authentapp
+        - name: JWT_SECRET
+          value: "mon-super-secret-jwt-k8s-2024"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+
+---
+# ===== Service de l'application (accessible de l'extérieur) =====
+apiVersion: v1
+kind: Service
+metadata:
+  name: authent-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: authent-app
+  ports:
+    - port: 3000
+      targetPort: 3000
