@@ -76,7 +76,7 @@ metadata:
 spec:
   serviceAccountName: tekton-builder
   triggers:
-  - binding:
+  - bindings:
       ref: github-binding
     template:
       ref: authent-app-template
