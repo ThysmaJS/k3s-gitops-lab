@@ -27,8 +27,6 @@ spec:
           value: "true"
           
     - name: build-image
-      taskRef:
-        name: kaniko
       runAfter:
         - fetch-repository
       workspaces:
@@ -39,13 +37,15 @@ spec:
           value: $(params.image-reference)
         - name: DOCKERFILE
           value: "./Dockerfile"
-      # Cette section force Kaniko à utiliser le dossier de credentials injecté par Tekton
+      # On définit la tâche directement ici pour forcer l'auth Docker
       taskSpec:
         params:
           - name: IMAGE
           - name: DOCKERFILE
         workspaces:
           - name: source
+        results:
+          - name: IMAGE_DIGEST
         steps:
           - name: build-and-push
             image: gcr.io/kaniko-project/executor:latest
@@ -59,6 +59,3 @@ spec:
               - --context=$(workspaces.source.path)
               - --destination=$(params.IMAGE)
               - --digest-file=$(results.IMAGE_DIGEST.path)
-        results:
-          - name: IMAGE_DIGEST
-            description: Digest of the image just built.
