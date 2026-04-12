@@ -1,0 +1,38 @@
+expose:
+  type: ingress
+  ingress:
+    hosts:
+      core: harbor.cluster.local
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      cert-manager.io/cluster-issuer: ca-issuer
+  tls:
+    enabled: true
+    certSource: secret
+    secret:
+      secretName: harbor-tls
+
+externalURL: https://harbor.cluster.local
+
+persistence:
+  enabled: true
+  resourcePolicy: "keep"
+  persistentVolumeClaim:
+    registry:
+      size: 10Gi
+    database:
+      size: 2Gi
+    redis:
+      size: 1Gi
+
+harborAdminPassword: "ChangeMe123!"
+
+database:
+  type: internal
+
+redis:
+  type: internal
+
+trivy:
+  enabled: true    # scanner de vulnérabilités intégré
