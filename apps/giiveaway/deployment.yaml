@@ -95,6 +95,8 @@ spec:
               key: cloudinary-api-secret
         - name: ASSOCIATION_API_URL
           value: "https://recherche-entreprises.api.gouv.fr/search"
+        - name: USE_DETERMINISTIC_OTP
+          value: "true"
 ---
 apiVersion: apps/v1
 kind: Deployment
