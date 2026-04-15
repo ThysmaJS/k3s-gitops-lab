@@ -60,6 +60,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: harbor-portal
+            name: harbor-core
             port:
               number: 80
