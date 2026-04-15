@@ -38,6 +38,63 @@ spec:
             secretKeyRef:
               name: giiveaway-secrets
               key: jwt-refresh-secret
+        - name: JWT_ACCESS_EXPIRES_IN
+          value: "15m"
+        - name: JWT_REFRESH_EXPIRES_IN
+          value: "7d"
+        - name: API_URL
+          value: "https://api.giiveaway.fr"
+        - name: FRONTEND_URL
+          value: "https://giiveaway.fr"
+        - name: STORAGE_TYPE
+          value: "local"
+        - name: THROTTLER_DISABLED
+          value: "false"
+        - name: MAIL_FROM_EMAIL
+          value: "noreply@giveaway.com"
+        - name: MAIL_FROM_NAME
+          value: "GiveAWay"
+        - name: BREVO_URL
+          value: "https://api.brevo.com/v3/smtp/email"
+        - name: BREVO_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: brevo-api-key
+        - name: PUBLIC_GOOGLE_USERINFO_URL
+          value: "https://www.googleapis.com/oauth2/v3/userinfo"
+        - name: GOOGLE_CLIENT_WEB_ID
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: google-client-web-id
+        - name: GOOGLE_ANDROID_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: google-android-client-id
+        - name: GOOGLE_IOS_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: google-ios-client-id
+        - name: CLOUDINARY_CLOUD_NAME
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: cloudinary-cloud-name
+        - name: CLOUDINARY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: cloudinary-api-key
+        - name: CLOUDINARY_API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: cloudinary-api-secret
+        - name: ASSOCIATION_API_URL
+          value: "https://recherche-entreprises.api.gouv.fr/search"
 ---
 apiVersion: apps/v1
 kind: Deployment
