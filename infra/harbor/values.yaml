@@ -13,7 +13,7 @@ expose:
     secret:
       secretName: harbor-tls
 
-externalURL: https://harbor.cluster.local
+externalURL: https://harbor.thysmadev.fr
 
 persistence:
   enabled: true
