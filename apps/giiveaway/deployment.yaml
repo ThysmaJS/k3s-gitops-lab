@@ -5,6 +5,7 @@ metadata:
   namespace: giiveaway
 spec:
   replicas: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: giiveaway-api
@@ -105,6 +106,7 @@ metadata:
   namespace: giiveaway
 spec:
   replicas: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: giiveaway-front
