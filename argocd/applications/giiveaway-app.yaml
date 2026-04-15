@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: giiveaway
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ThysmaJS/k3s-gitops-lab.git
+    targetRevision: HEAD
+    path: apps/giiveaway
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: giiveaway
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
