@@ -13,6 +13,8 @@ spec:
       labels:
         app: giiveaway-api
     spec:
+      imagePullSecrets:
+      - name: harbor-pull-secret
       containers:
       - name: api
         image: harbor.thysmadev.fr/giiveaway/api:latest
@@ -52,6 +54,8 @@ spec:
       labels:
         app: giiveaway-front
     spec:
+      imagePullSecrets:
+      - name: harbor-pull-secret
       containers:
       - name: front
         image: harbor.thysmadev.fr/giiveaway/front:latest
