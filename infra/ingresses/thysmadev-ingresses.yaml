@@ -50,16 +50,53 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    ingress.kubernetes.io/proxy-body-size: "0"
+    ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: traefik
   rules:
   - host: harbor.thysmadev.fr
     http:
       paths:
-      - path: /
+      - path: /api/
         pathType: Prefix
         backend:
           service:
             name: harbor-core
+            port:
+              number: 80
+      - path: /service/
+        pathType: Prefix
+        backend:
+          service:
+            name: harbor-core
+            port:
+              number: 80
+      - path: /v2/
+        pathType: Prefix
+        backend:
+          service:
+            name: harbor-core
+            port:
+              number: 80
+      - path: /chartrepo/
+        pathType: Prefix
+        backend:
+          service:
+            name: harbor-core
+            port:
+              number: 80
+      - path: /c/
+        pathType: Prefix
+        backend:
+          service:
+            name: harbor-core
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: harbor-portal
             port:
               number: 80
