@@ -29,13 +29,3 @@ spec:
             name: giiveaway-api
             port:
               number: 3000
-  - host: pgadmin.giiveaway.fr
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: pgadmin
-            port:
-              number: 80

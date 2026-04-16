@@ -1,3 +1,13 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: pgadmin-headers
+  namespace: giiveaway
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,6 +34,12 @@ spec:
             secretKeyRef:
               name: giiveaway-secrets
               key: postgres-password
+        - name: PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION
+          value: "False"
+        - name: PGADMIN_CONFIG_WTF_CSRF_SSL_STRICT
+          value: "False"
+        - name: PGADMIN_CONFIG_SESSION_COOKIE_SECURE
+          value: "False"
         ports:
         - containerPort: 80
 ---
@@ -38,3 +54,26 @@ spec:
   ports:
   - port: 80
     targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin-ingress
+  namespace: giiveaway
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: giiveaway-pgadmin-headers@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: pgadmin.giiveaway.fr
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: pgadmin
+            port:
+              number: 80
