@@ -97,7 +97,7 @@ spec:
         - name: ASSOCIATION_API_URL
           value: "https://recherche-entreprises.api.gouv.fr/search"
         - name: USE_DETERMINISTIC_OTP
-          value: "true"
+          value: "false"
 ---
 apiVersion: apps/v1
 kind: Deployment
