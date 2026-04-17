@@ -52,7 +52,7 @@ spec:
         - name: THROTTLER_DISABLED
           value: "false"
         - name: MAIL_FROM_EMAIL
-          value: "noreply@giveaway.com"
+          value: "contact.giiveaway@gmail.com"
         - name: MAIL_FROM_NAME
           value: "GiveAWay"
         - name: BREVO_URL
