@@ -39,7 +39,10 @@ spec:
         - name: MONGO_DB
           value: authentapp
         - name: JWT_SECRET
-          value: "mon-super-secret-jwt-k8s-2024"
+          valueFrom:
+            secretKeyRef:
+              name: authent-app-secrets
+              key: JWT_SECRET
         resources:
           requests:
             memory: "128Mi"

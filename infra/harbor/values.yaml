@@ -26,7 +26,8 @@ persistence:
     redis:
       size: 1Gi
 
-harborAdminPassword: "ChangeMe123!"
+existingSecretAdminPassword: harbor-admin-secret
+existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
 
 database:
   type: internal

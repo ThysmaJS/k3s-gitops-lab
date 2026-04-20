@@ -3,15 +3,6 @@ kind: Namespace
 metadata:
   name: cloudflared
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: cloudflared-token
-  namespace: cloudflared
-type: Opaque
-stringData:
-  token: "eyJhIjoiZmViNWU4YjU1OTI5N2QwZWQwNGE0NWIxZjI4ZGQxMjIiLCJ0IjoiOTA3NmYxNzgtNmU4NS00Njc5LTkyYjYtMTQ1ZDAyZDU3NGQ5IiwicyI6IllXRTROalZtWkdVdFlqYzVNQzAwTnpWakxXRmtOMkl0T0dFelltUTRNVEJoTUdaaSJ9"
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:

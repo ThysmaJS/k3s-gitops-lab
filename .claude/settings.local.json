@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(kubectl get *)",
+      "Bash(kubectl create *)",
+      "Bash(kubeseal --cert pub-cert.pem --format yaml)",
+      "Bash(xargs grep *)"
+    ]
+  }
+}
