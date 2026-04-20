@@ -15,6 +15,7 @@ metadata:
   namespace: giiveaway
 spec:
   replicas: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: pgadmin
@@ -42,6 +43,13 @@ spec:
           value: "False"
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
 ---
 apiVersion: v1
 kind: Service

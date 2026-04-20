@@ -1,10 +1,11 @@
-# ===== Déploiement de l'application AuthentApp =====
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: authent-app
+  namespace: authent-app
 spec:
   replicas: 2
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: authent-app
@@ -50,15 +51,14 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "250m"
-
 ---
-# ===== Service de l'application (accessible de l'extérieur) =====
 apiVersion: v1
 kind: Service
 metadata:
   name: authent-app-service
+  namespace: authent-app
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: authent-app
   ports:

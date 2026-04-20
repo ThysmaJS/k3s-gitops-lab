@@ -1,23 +1,23 @@
-# ===== 1. Disque persistant pour MongoDB =====
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongo-pvc
+  namespace: authent-app
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 2Gi
-
 ---
-# ===== 2. Déploiement MongoDB =====
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongodb
+  namespace: authent-app
 spec:
   replicas: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app: mongodb
@@ -37,17 +37,23 @@ spec:
         volumeMounts:
         - name: mongo-storage
           mountPath: /data/db
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
       volumes:
       - name: mongo-storage
         persistentVolumeClaim:
           claimName: mongo-pvc
-
 ---
-# ===== 3. Service interne MongoDB (ClusterIP) =====
 apiVersion: v1
 kind: Service
 metadata:
   name: mongodb-service
+  namespace: authent-app
 spec:
   type: ClusterIP
   selector:
