@@ -27,9 +27,35 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: harbor
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: harbor-core
+      namespace: harbor
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: harbor-jobservice
+      namespace: harbor
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: harbor-registry
+      namespace: harbor
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: harbor-registry-htpasswd
+      namespace: harbor
+      jsonPointers:
+        - /data
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true

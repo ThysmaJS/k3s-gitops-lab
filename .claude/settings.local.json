@@ -4,7 +4,10 @@
       "Bash(kubectl get *)",
       "Bash(kubectl create *)",
       "Bash(kubeseal --cert pub-cert.pem --format yaml)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(argocd app *)",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e ' *)"
     ]
   }
 }
