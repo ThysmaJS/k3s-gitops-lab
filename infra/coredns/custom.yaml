@@ -4,8 +4,11 @@ metadata:
   name: coredns-custom
   namespace: kube-system
 data:
-  dex.override: |
-    hosts {
-      10.43.82.84 dex.thysmadev.fr
-      fallthrough
+  dex.server: |
+    dex.thysmadev.fr:53 {
+      hosts {
+        10.43.82.84 dex.thysmadev.fr
+        fallthrough
+      }
+      cache 30
     }
