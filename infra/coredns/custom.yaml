@@ -7,7 +7,7 @@ data:
   dex.server: |
     dex.thysmadev.fr:53 {
       hosts {
-        10.43.82.84 dex.thysmadev.fr
+        10.43.167.52 dex.thysmadev.fr
         fallthrough
       }
       cache 30
