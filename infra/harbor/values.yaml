@@ -36,3 +36,17 @@ redis:
 
 trivy:
   enabled: true    # scanner de vulnérabilités intégré
+
+core:
+  extraEnvVars:
+    - name: CONFIG_OVERWRITE_JSON
+      value: >-
+        {"auth_mode":"oidc_auth",
+        "oidc_name":"Dex",
+        "oidc_endpoint":"https://dex.thysmadev.fr",
+        "oidc_client_id":"harbor",
+        "oidc_client_secret":"harbor-dex-secret-change-me",
+        "oidc_groups_claim":"groups",
+        "oidc_scope":"openid,profile,email",
+        "oidc_auto_onboard":true,
+        "oidc_user_claim":"email"}

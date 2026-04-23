@@ -1,6 +1,28 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  name: dex-ingress-public
+  namespace: dex
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: dex.thysmadev.fr
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dex
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
   name: argocd-ingress-public
   namespace: argocd
   annotations:

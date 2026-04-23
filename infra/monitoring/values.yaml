@@ -1,6 +1,19 @@
 grafana:
   adminPassword: "ChangeMe123!"
 
+  grafana.ini:
+    auth.generic_oauth:
+      enabled: true
+      name: Dex
+      client_id: grafana
+      client_secret: grafana-dex-secret-change-me
+      scopes: openid profile email
+      auth_url: https://dex.thysmadev.fr/auth
+      token_url: https://dex.thysmadev.fr/token
+      api_url: https://dex.thysmadev.fr/userinfo
+      allow_sign_up: true
+      role_attribute_path: "contains(email, 'admin@thysmadev.fr') && 'Admin' || 'Editor'"
+
   ingress:
     enabled: true
     ingressClassName: traefik
