@@ -57,12 +57,11 @@ data:
 
     staticPasswords:
       - email: admin@thysmadev.fr
-        # hash généré via : htpasswd -nbBC 10 "" "MOT_DE_PASSE" | tr -d ':\n'
-        hash: "$2a$10$REMPLACER_PAR_HASH_BCRYPT_ADMIN"
+        hash: "$2a$10$8UftIjUlTh9dkr58YHVNWeRqhbSteMBlhRJh27DzV7k15cAFG5OQO"
         username: admin
         userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
       - email: martin@thysmadev.fr
-        hash: "$2a$10$REMPLACER_PAR_HASH_BCRYPT_MARTIN"
+        hash: "$2a$10$V.0JuXiuG67P8R9NIQTVy.XmJDljAg7I/BMCihWUT.VlNwA2edQKS"
         username: martin
         userID: "18a8684b-db88-4b73-90a9-3cd1661f5467"
 
