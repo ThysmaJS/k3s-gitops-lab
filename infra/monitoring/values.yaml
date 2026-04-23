@@ -1,0 +1,43 @@
+grafana:
+  adminPassword: "ChangeMe123!"
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    hosts:
+      - grafana.thysmadev.fr
+
+  persistence:
+    enabled: true
+    size: 2Gi
+
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+# k3s embeds ces composants dans un seul binaire — leurs endpoints ne sont pas exposés
+# de la même façon que dans un cluster kubeadm standard
+kubeControllerManager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+alertmanager:
+  enabled: true
