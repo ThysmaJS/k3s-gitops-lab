@@ -11,6 +11,8 @@ spec:
     repoURL: https://github.com/ThysmaJS/k3s-gitops-lab.git
     targetRevision: HEAD
     path: infra
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
