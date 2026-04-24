@@ -7,7 +7,17 @@
       "Bash(xargs grep *)",
       "Bash(argocd app *)",
       "Bash(python3 -c ' *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(kubectl describe *)",
+      "Bash(kubectl top *)",
+      "Bash(kubectl drain *)",
+      "Bash(kubectl delete *)",
+      "Bash(kubectl uncordon *)",
+      "Bash(ssh root@192.168.0.203 \"systemctl restart k3s\")",
+      "Bash(ssh -o ConnectTimeout=5 root@192.168.0.203 \"systemctl status k3s --no-pager | head -5\")",
+      "Bash(kubectl logs *)",
+      "Bash(kubectl apply *)",
+      "Bash(kubectl rollout *)"
     ]
   }
 }
