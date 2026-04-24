@@ -38,6 +38,10 @@ spec:
         app: headlamp
     spec:
       serviceAccountName: headlamp
+      hostAliases:
+        - ip: "10.43.167.52"
+          hostnames:
+            - "dex.thysmadev.fr"
       containers:
         - name: headlamp
           image: ghcr.io/headlamp-k8s/headlamp:latest
@@ -48,6 +52,13 @@ spec:
             - -oidc-client-secret=headlamp-dex-secret-change-me
             - -oidc-idp-issuer-url=https://dex.thysmadev.fr
             - -oidc-scopes=profile,email
+          env:
+            - name: SSL_CERT_FILE
+              value: /certs/ca.crt
+          volumeMounts:
+            - name: ca-cert
+              mountPath: /certs
+              readOnly: true
           ports:
             - containerPort: 4466
           resources:
@@ -57,6 +68,10 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "200m"
+      volumes:
+        - name: ca-cert
+          secret:
+            secretName: cluster-ca-bundle
 ---
 apiVersion: v1
 kind: Service

@@ -6,8 +6,13 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: ca-issuer
 spec:
   ingressClassName: traefik
+  tls:
+    - hosts:
+        - dex.thysmadev.fr
+      secretName: dex-tls
   rules:
   - host: dex.thysmadev.fr
     http:
