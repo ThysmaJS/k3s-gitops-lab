@@ -17,7 +17,8 @@
       "Bash(ssh -o ConnectTimeout=5 root@192.168.0.203 \"systemctl status k3s --no-pager | head -5\")",
       "Bash(kubectl logs *)",
       "Bash(kubectl apply *)",
-      "Bash(kubectl rollout *)"
+      "Bash(kubectl rollout *)",
+      "Bash(kubectl label *)"
     ]
   }
 }
