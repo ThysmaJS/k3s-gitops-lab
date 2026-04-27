@@ -31,7 +31,7 @@ prometheus:
         memory: "400Mi"
         cpu: "100m"
       limits:
-        memory: "700Mi"
+        memory: "1500Mi"
         cpu: "500m"
     storageSpec:
       volumeClaimTemplate:

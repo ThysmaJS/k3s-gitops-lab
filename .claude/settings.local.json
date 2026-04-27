@@ -18,7 +18,18 @@
       "Bash(kubectl logs *)",
       "Bash(kubectl apply *)",
       "Bash(kubectl rollout *)",
-      "Bash(kubectl label *)"
+      "Bash(kubectl label *)",
+      "Read(//usr/local/bin/**)",
+      "Read(//home/thysma/**)",
+      "Bash(openssl x509 *)",
+      "Bash(grep -v \"^{\\\\\"level\\\\\":\\\\\"info\\\\\",\\\\\"msg\\\\\":\\\\\"Reconciling\\\\\"\")",
+      "Bash(kubectl patch *)",
+      "Bash(kubectl api-resources *)",
+      "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.metadata.name}')",
+      "Bash(kubectl -n argocd patch app monitoring --type=merge -p '{\"status\":{\"operationState\":null}}')",
+      "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.status.operationState.phase}')",
+      "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.status.operationState.message}')",
+      "Bash(python3 -m json.tool)"
     ]
   }
 }
