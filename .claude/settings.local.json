@@ -32,7 +32,12 @@
       "Bash(python3 -m json.tool)",
       "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.status.sync.revision}')",
       "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.status.operationState.syncResult.revisions}')",
-      "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab log --oneline -3)"
+      "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab log --oneline -3)",
+      "Bash(KUBECONFIG=\"\" kubectl --server=https://192.168.0.202:6443 --insecure-skip-tls-verify get nodes)",
+      "Bash(ping -c 2 192.168.0.201)",
+      "Bash(ping -c 2 192.168.0.202)",
+      "Bash(ping -c 2 192.168.0.203)",
+      "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab diff apps/giiveaway/pgadmin.yaml)"
     ]
   }
 }
