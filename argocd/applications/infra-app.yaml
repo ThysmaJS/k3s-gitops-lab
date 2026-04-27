@@ -13,6 +13,7 @@ spec:
     path: infra
     directory:
       recurse: true
+      exclude: 'cloudflared/**'
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:

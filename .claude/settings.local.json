@@ -37,7 +37,8 @@
       "Bash(ping -c 2 192.168.0.201)",
       "Bash(ping -c 2 192.168.0.202)",
       "Bash(ping -c 2 192.168.0.203)",
-      "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab diff apps/giiveaway/pgadmin.yaml)"
+      "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab diff apps/giiveaway/pgadmin.yaml)",
+      "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab diff argocd/applications/infra-app.yaml)"
     ]
   }
 }
