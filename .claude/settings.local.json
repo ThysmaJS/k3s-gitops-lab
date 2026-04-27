@@ -29,7 +29,10 @@
       "Bash(kubectl -n argocd patch app monitoring --type=merge -p '{\"status\":{\"operationState\":null}}')",
       "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.status.operationState.phase}')",
       "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.status.operationState.message}')",
-      "Bash(python3 -m json.tool)"
+      "Bash(python3 -m json.tool)",
+      "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.status.sync.revision}')",
+      "Bash(kubectl -n argocd get app monitoring -o jsonpath='{.status.operationState.syncResult.revisions}')",
+      "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab log --oneline -3)"
     ]
   }
 }
