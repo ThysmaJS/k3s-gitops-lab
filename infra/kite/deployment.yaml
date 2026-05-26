@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kite
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kite
+  namespace: kite
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kite-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: kite
+    namespace: kite
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kite-data
+  namespace: kite
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kite
+  namespace: kite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kite
+  template:
+    metadata:
+      labels:
+        app: kite
+    spec:
+      serviceAccountName: kite
+      containers:
+        - name: kite
+          image: ghcr.io/kite-org/kite:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_DSN
+              value: /data/db.sqlite
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kite-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kite
+  namespace: kite
+spec:
+  selector:
+    app: kite
+  ports:
+    - port: 80
+      targetPort: 8080

@@ -24,22 +24,22 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: headlamp-ingress-public
-  namespace: headlamp
+  name: kite-ingress-public
+  namespace: kite
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   ingressClassName: traefik
   rules:
-  - host: headlamp.thysmadev.fr
+  - host: kite.thysmadev.fr
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: headlamp
+            name: kite
             port:
               number: 80
 ---
