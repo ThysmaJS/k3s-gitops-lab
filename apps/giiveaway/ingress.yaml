@@ -12,6 +12,13 @@ spec:
   - host: giiveaway.fr
     http:
       paths:
+      - path: /avatars/
+        pathType: Prefix
+        backend:
+          service:
+            name: giiveaway-api
+            port:
+              number: 3000
       - path: /
         pathType: Prefix
         backend:
