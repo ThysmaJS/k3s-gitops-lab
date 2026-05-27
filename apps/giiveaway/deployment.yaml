@@ -18,7 +18,7 @@ spec:
       - name: harbor-pull-secret
       containers:
       - name: api
-        image: harbor.thysmadev.fr/giiveaway/api:a81cea36f412b3a94044fb7731ee9285b21464e0
+        image: harbor.thysmadev.fr/giiveaway/api:4cb34df9e73e8a7b4fab4e2342a49ce86c9ad879
         ports:
         - containerPort: 3000
         env:
@@ -150,7 +150,7 @@ spec:
       - name: harbor-pull-secret
       containers:
       - name: admin
-        image: harbor.thysmadev.fr/giiveaway/admin:a81cea36f412b3a94044fb7731ee9285b21464e0
+        image: harbor.thysmadev.fr/giiveaway/admin:4cb34df9e73e8a7b4fab4e2342a49ce86c9ad879
         ports:
         - containerPort: 80
         resources:
@@ -181,7 +181,7 @@ spec:
       - name: harbor-pull-secret
       containers:
       - name: front
-        image: harbor.thysmadev.fr/giiveaway/front:a81cea36f412b3a94044fb7731ee9285b21464e0
+        image: harbor.thysmadev.fr/giiveaway/front:4cb34df9e73e8a7b4fab4e2342a49ce86c9ad879
         ports:
         - containerPort: 80
         resources:
