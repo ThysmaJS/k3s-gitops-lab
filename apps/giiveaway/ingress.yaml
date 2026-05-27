@@ -6,7 +6,7 @@ metadata:
 spec:
   replacePathRegex:
     regex: ^/avatars/(.*)
-    replacement: /uploads/$1
+    replacement: /uploads/avatars/$1
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
