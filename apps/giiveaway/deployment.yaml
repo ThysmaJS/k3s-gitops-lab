@@ -44,9 +44,18 @@ spec:
             secretKeyRef:
               name: giiveaway-secrets
               key: jwt-admin-refresh-secret
+        - name: JWT_ADMIN_ACCESS_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: jwt-admin-access-secret
         - name: JWT_ACCESS_EXPIRES_IN
           value: "15m"
         - name: JWT_REFRESH_EXPIRES_IN
+          value: "7d"
+        - name: JWT_ADMIN_ACCESS_EXPIRES_IN
+          value: "15m"
+        - name: JWT_ADMIN_REFRESH_EXPIRES_IN
           value: "7d"
         - name: API_URL
           value: "https://api.giiveaway.fr"
@@ -99,6 +108,16 @@ spec:
             secretKeyRef:
               name: giiveaway-secrets
               key: cloudinary-api-secret
+        - name: CORS_ALLOWED_ORIGINS
+          value: "https://giiveaway.fr,https://api.giiveaway.fr"
+        - name: ADMIN_LOGIN_URL
+          value: "https://admin.giiveaway.fr/login"
+        - name: ADMIN_BASE_URL
+          value: "https://admin.giiveaway.fr"
+        - name: CONTACT_ADMIN_EMAIL
+          value: "contact.giiveaway@gmail.com"
+        - name: EXPO_PUSH_URL
+          value: "https://exp.host/--/api/v2/push/send"
         - name: ASSOCIATION_API_URL
           value: "https://recherche-entreprises.api.gouv.fr/search"
         - name: USE_DETERMINISTIC_OTP
