@@ -39,6 +39,11 @@ spec:
             secretKeyRef:
               name: giiveaway-secrets
               key: jwt-refresh-secret
+        - name: JWT_ADMIN_REFRESH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: jwt-admin-refresh-secret
         - name: JWT_ACCESS_EXPIRES_IN
           value: "15m"
         - name: JWT_REFRESH_EXPIRES_IN
