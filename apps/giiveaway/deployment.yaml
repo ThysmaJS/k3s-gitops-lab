@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: giiveaway-uploads
+  namespace: giiveaway
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -122,6 +134,9 @@ spec:
           value: "https://recherche-entreprises.api.gouv.fr/search"
         - name: USE_DETERMINISTIC_OTP
           value: "false"
+        volumeMounts:
+        - name: uploads
+          mountPath: /app/uploads
         resources:
           requests:
             memory: "256Mi"
@@ -129,6 +144,10 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+      volumes:
+      - name: uploads
+        persistentVolumeClaim:
+          claimName: giiveaway-uploads
 ---
 apiVersion: apps/v1
 kind: Deployment
