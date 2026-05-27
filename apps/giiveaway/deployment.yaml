@@ -109,7 +109,7 @@ spec:
               name: giiveaway-secrets
               key: cloudinary-api-secret
         - name: CORS_ALLOWED_ORIGINS
-          value: "https://giiveaway.fr,https://api.giiveaway.fr"
+          value: "https://giiveaway.fr,https://api.giiveaway.fr,https://admin.giiveaway.fr"
         - name: ADMIN_LOGIN_URL
           value: "https://admin.giiveaway.fr/login"
         - name: ADMIN_BASE_URL
