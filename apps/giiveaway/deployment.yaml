@@ -133,6 +133,37 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: giiveaway-admin
+  namespace: giiveaway
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: giiveaway-admin
+  template:
+    metadata:
+      labels:
+        app: giiveaway-admin
+    spec:
+      imagePullSecrets:
+      - name: harbor-pull-secret
+      containers:
+      - name: admin
+        image: harbor.thysmadev.fr/giiveaway/admin:e2fbe84ac2eb53d6208b4f7a57aa51880a6e747d
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: giiveaway-front
   namespace: giiveaway
 spec:
