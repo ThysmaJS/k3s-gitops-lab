@@ -19,6 +19,7 @@ spec:
       initContainers:
       - name: migrate
         image: ghcr.io/thysmajs/michelin-backend:latest
+        imagePullPolicy: Always
         command: ["npx", "prisma", "migrate", "deploy"]
         env:
         - name: DATABASE_URL
@@ -29,6 +30,7 @@ spec:
       containers:
       - name: backend
         image: ghcr.io/thysmajs/michelin-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
         env:
