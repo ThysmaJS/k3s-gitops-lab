@@ -1,3 +1,36 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: avatars-rewrite
+  namespace: giiveaway
+spec:
+  replacePathRegex:
+    regex: ^/avatars/(.*)
+    replacement: /uploads/avatars/$1
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: giiveaway-avatars-ingress
+  namespace: giiveaway
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: giiveaway-avatars-rewrite@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: giiveaway.fr
+    http:
+      paths:
+      - path: /avatars/
+        pathType: Prefix
+        backend:
+          service:
+            name: giiveaway-api
+            port:
+              number: 3000
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -17,6 +50,16 @@ spec:
         backend:
           service:
             name: giiveaway-front
+            port:
+              number: 80
+  - host: admin.giiveaway.fr
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: giiveaway-admin
             port:
               number: 80
   - host: api.giiveaway.fr

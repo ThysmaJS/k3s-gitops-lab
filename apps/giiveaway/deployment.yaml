@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: giiveaway-uploads
+  namespace: giiveaway
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +30,7 @@ spec:
       - name: harbor-pull-secret
       containers:
       - name: api
-        image: harbor.thysmadev.fr/giiveaway/api:dd7fa5aa07b0f692854f641227b1ac20ce7fe249
+        image: harbor.thysmadev.fr/giiveaway/api:4cb34df9e73e8a7b4fab4e2342a49ce86c9ad879
         ports:
         - containerPort: 3000
         env:
@@ -39,9 +51,23 @@ spec:
             secretKeyRef:
               name: giiveaway-secrets
               key: jwt-refresh-secret
+        - name: JWT_ADMIN_REFRESH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: jwt-admin-refresh-secret
+        - name: JWT_ADMIN_ACCESS_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: jwt-admin-access-secret
         - name: JWT_ACCESS_EXPIRES_IN
           value: "15m"
         - name: JWT_REFRESH_EXPIRES_IN
+          value: "7d"
+        - name: JWT_ADMIN_ACCESS_EXPIRES_IN
+          value: "15m"
+        - name: JWT_ADMIN_REFRESH_EXPIRES_IN
           value: "7d"
         - name: API_URL
           value: "https://api.giiveaway.fr"
@@ -94,10 +120,23 @@ spec:
             secretKeyRef:
               name: giiveaway-secrets
               key: cloudinary-api-secret
+        - name: CORS_ALLOWED_ORIGINS
+          value: "https://giiveaway.fr,https://api.giiveaway.fr,https://admin.giiveaway.fr"
+        - name: ADMIN_LOGIN_URL
+          value: "https://admin.giiveaway.fr/login"
+        - name: ADMIN_BASE_URL
+          value: "https://admin.giiveaway.fr"
+        - name: CONTACT_ADMIN_EMAIL
+          value: "contact.giiveaway@gmail.com"
+        - name: EXPO_PUSH_URL
+          value: "https://exp.host/--/api/v2/push/send"
         - name: ASSOCIATION_API_URL
           value: "https://recherche-entreprises.api.gouv.fr/search"
         - name: USE_DETERMINISTIC_OTP
           value: "false"
+        volumeMounts:
+        - name: uploads
+          mountPath: /app/uploads
         resources:
           requests:
             memory: "256Mi"
@@ -105,6 +144,41 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+      volumes:
+      - name: uploads
+        persistentVolumeClaim:
+          claimName: giiveaway-uploads
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: giiveaway-admin
+  namespace: giiveaway
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: giiveaway-admin
+  template:
+    metadata:
+      labels:
+        app: giiveaway-admin
+    spec:
+      imagePullSecrets:
+      - name: harbor-pull-secret
+      containers:
+      - name: admin
+        image: harbor.thysmadev.fr/giiveaway/admin:4cb34df9e73e8a7b4fab4e2342a49ce86c9ad879
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -126,7 +200,7 @@ spec:
       - name: harbor-pull-secret
       containers:
       - name: front
-        image: harbor.thysmadev.fr/giiveaway/front:dd7fa5aa07b0f692854f641227b1ac20ce7fe249
+        image: harbor.thysmadev.fr/giiveaway/front:4cb34df9e73e8a7b4fab4e2342a49ce86c9ad879
         ports:
         - containerPort: 80
         resources:

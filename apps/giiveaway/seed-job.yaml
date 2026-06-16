@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: giiveaway-seed
+  namespace: giiveaway
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+      - name: harbor-pull-secret
+      containers:
+      - name: seed
+        image: harbor.thysmadev.fr/giiveaway/api:e2fbe84ac2eb53d6208b4f7a57aa51880a6e747d
+        command: ["sh", "-c", "cd /tmp && npm init -y && npm install dotenv @faker-js/faker && NODE_PATH=/tmp/node_modules node /app/dist/prisma/seed.js"]
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: giiveaway-secrets
+              key: database-url
