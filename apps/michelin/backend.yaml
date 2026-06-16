@@ -4,7 +4,7 @@ metadata:
   name: michelin-backend
   namespace: michelin
   annotations:
-    deploy-sha: "f3f1792 (2026-06-16T17:09:10Z)"
+    deploy-sha: "0f138f6 (2026-06-16T19:32:33Z)"
 spec:
   replicas: 1
   revisionHistoryLimit: 2
