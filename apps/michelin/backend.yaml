@@ -16,6 +16,16 @@ spec:
       labels:
         app: michelin-backend
     spec:
+      initContainers:
+      - name: migrate
+        image: ghcr.io/thysmajs/michelin-backend:latest
+        command: ["npx", "prisma", "migrate", "deploy"]
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: DATABASE_URL
       containers:
       - name: backend
         image: ghcr.io/thysmajs/michelin-backend:latest
