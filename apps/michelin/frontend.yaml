@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: michelin-frontend
+  namespace: michelin
+  annotations:
+    deploy-sha: latest
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: michelin-frontend
+  template:
+    metadata:
+      labels:
+        app: michelin-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/thysmajs/michelin-frontend:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
