@@ -24,11 +24,13 @@ spec:
         env:
         - name: NODE_ENV
           value: "production"
+        - name: FRONTEND_ORIGIN
+          value: "https://michelin.thysmadev.fr"
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
-              name: michelin-secrets
-              key: database-url
+              name: backend-secret
+              key: DATABASE_URL
         resources:
           requests:
             memory: "256Mi"
