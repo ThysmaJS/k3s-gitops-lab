@@ -31,7 +31,7 @@ spec:
         image: postgres:15-alpine
         env:
         - name: POSTGRES_DB
-          value: michelin
+          value: michelin_velo
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
