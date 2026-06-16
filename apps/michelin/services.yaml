@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: michelin-backend
+  namespace: michelin
+spec:
+  selector:
+    app: michelin-backend
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: michelin-frontend
+  namespace: michelin
+spec:
+  selector:
+    app: michelin-frontend
+  ports:
+  - port: 80
+    targetPort: 80
