@@ -34,6 +34,22 @@ database:
 redis:
   type: internal
 
+core:
+  replicas: 0
+
+portal:
+  replicas: 0
+
+jobservice:
+  replicas: 0
+
+registry:
+  replicas: 0
+
+exporter:
+  replicas: 0
+
 trivy:
   enabled: true    # scanner de vulnérabilités intégré
+  replicas: 0
 
