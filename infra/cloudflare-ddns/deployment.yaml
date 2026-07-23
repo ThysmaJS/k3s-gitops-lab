@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare-ddns
+  namespace: cloudflare-ddns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare-ddns
+  template:
+    metadata:
+      labels:
+        app: cloudflare-ddns
+    spec:
+      containers:
+        - name: cloudflare-ddns
+          image: oznu/cloudflare-ddns:latest
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-ddns-token
+                  key: API_KEY
+            - name: ZONE
+              value: "thysmadev.fr"
+            - name: SUBDOMAIN
+              value: "mc"
+            - name: PROXIED
+              value: "false"
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
