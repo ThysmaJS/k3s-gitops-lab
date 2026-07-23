@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minecraft
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ThysmaJS/k3s-gitops-lab.git
+    targetRevision: HEAD
+    path: apps/minecraft-cobbleverse
+  destination:
+    name: HP_laptop_cluster
+    namespace: minecraft
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
