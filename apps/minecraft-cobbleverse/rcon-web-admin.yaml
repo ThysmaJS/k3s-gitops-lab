@@ -35,7 +35,7 @@ spec:
               name: ws
           env:
             - name: RWA_RCON_HOST
-              value: "minecraft"
+              value: "minecraft-rcon"
             - name: RWA_RCON_PORT
               value: "25575"
             - name: RWA_USERNAME

@@ -13,3 +13,18 @@ spec:
       targetPort: 25565
       nodePort: 30565
       protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-rcon
+  namespace: minecraft
+spec:
+  type: ClusterIP
+  selector:
+    app: minecraft
+  ports:
+    - name: rcon
+      port: 25575
+      targetPort: 25575
+      protocol: TCP
