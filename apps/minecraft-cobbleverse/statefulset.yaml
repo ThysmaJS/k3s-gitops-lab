@@ -14,6 +14,20 @@ spec:
       labels:
         app: minecraft
     spec:
+      initContainers:
+        - name: fetch-modpack
+          image: curlimages/curl:8.10.1
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /data/modpack
+              if [ ! -f /data/modpack/COBBLEVERSE-1.7.42-CF.zip ]; then
+                curl -fsSL -o /data/modpack/COBBLEVERSE-1.7.42-CF.zip http://192.168.0.33:8000/COBBLEVERSE-1.7.42-CF.zip
+              fi
+          volumeMounts:
+            - name: data
+              mountPath: /data
       containers:
         - name: minecraft
           image: itzg/minecraft-server:java21
@@ -25,10 +39,8 @@ spec:
               value: "TRUE"
             - name: TYPE
               value: "AUTO_CURSEFORGE"
-            - name: CF_SLUG
-              value: "cobbleverse-cobblemon"
             - name: CF_MODPACK_ZIP
-              value: "http://192.168.0.33:8000/COBBLEVERSE-1.7.42-CF.zip"
+              value: "file:///data/modpack/COBBLEVERSE-1.7.42-CF.zip"
             - name: CF_API_KEY
               valueFrom:
                 secretKeyRef:
