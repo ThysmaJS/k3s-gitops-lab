@@ -43,6 +43,8 @@ spec:
               value: "cobbleverse-cobblemon"
             - name: CF_MODPACK_ZIP
               value: "/data/modpack/COBBLEVERSE-1.7.42-CF.zip"
+            - name: CF_EXCLUDE_MODS
+              value: "only-bottle-caps"
             - name: CF_API_KEY
               valueFrom:
                 secretKeyRef:
