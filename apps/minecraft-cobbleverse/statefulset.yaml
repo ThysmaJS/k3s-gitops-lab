@@ -51,11 +51,6 @@ spec:
               value: "true"
             - name: OPS
               value: "Braiff"
-            - name: RCON_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: minecraft-rcon
-                  key: RCON_PASSWORD
             - name: CF_API_KEY
               valueFrom:
                 secretKeyRef:
