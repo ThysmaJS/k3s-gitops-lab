@@ -42,7 +42,7 @@ spec:
             - name: CF_SLUG
               value: "cobbleverse-cobblemon"
             - name: CF_MODPACK_ZIP
-              value: "file:///data/modpack/COBBLEVERSE-1.7.42-CF.zip"
+              value: "/data/modpack/COBBLEVERSE-1.7.42-CF.zip"
             - name: CF_API_KEY
               valueFrom:
                 secretKeyRef:
