@@ -40,7 +40,8 @@
       "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab diff apps/giiveaway/pgadmin.yaml)",
       "Bash(git -C /home/thysma/Documents/Cours/M2/Devops/k3s-gitops-lab diff argocd/applications/infra-app.yaml)",
       "Bash(kubectl config *)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(kubeseal --version)"
     ]
   }
 }
