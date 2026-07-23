@@ -73,15 +73,13 @@ metadata:
   name: rcon-web-admin
   namespace: minecraft
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: rcon-web-admin
   ports:
     - name: http
       port: 4326
       targetPort: 4326
-      nodePort: 30326
     - name: ws
       port: 4327
       targetPort: 4327
-      nodePort: 30327
