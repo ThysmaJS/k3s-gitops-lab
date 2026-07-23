@@ -10,6 +10,21 @@ spec:
     requests:
       storage: 100Mi
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rcon-web-admin-config
+  namespace: minecraft
+data:
+  config.js: |
+    var config = {
+        "host": null,
+        "websocketUrlSsl": "wss://mc-admin-ws.thysmadev.fr",
+        "websocketUrl": null,
+        "port": 4326
+    };
+    module.exports = config;
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -62,10 +77,16 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /opt/rcon-web-admin/db
+            - name: config
+              mountPath: /opt/rcon-web-admin/config.js
+              subPath: config.js
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: rcon-web-admin-data
+        - name: config
+          configMap:
+            name: rcon-web-admin-config
 ---
 apiVersion: v1
 kind: Service
