@@ -46,7 +46,7 @@ spec:
             - name: CF_EXCLUDE_MODS
               value: "only-bottle-caps"
             - name: WHITELIST
-              value: "Braiff,teoledozzo8817"
+              value: "Braiff,TeoLeDozzzoo"
             - name: ENFORCE_WHITELIST
               value: "true"
             - name: OPS
