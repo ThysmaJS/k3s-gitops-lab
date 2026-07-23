@@ -16,7 +16,7 @@ metadata:
   name: giiveaway-api
   namespace: giiveaway
 spec:
-  replicas: 1
+  replicas: 0
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -155,7 +155,7 @@ metadata:
   name: giiveaway-admin
   namespace: giiveaway
 spec:
-  replicas: 1
+  replicas: 0
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -186,7 +186,7 @@ metadata:
   name: giiveaway-front
   namespace: giiveaway
 spec:
-  replicas: 1
+  replicas: 0
   revisionHistoryLimit: 2
   selector:
     matchLabels:
