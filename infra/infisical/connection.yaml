@@ -1,0 +1,8 @@
+apiVersion: secrets.infisical.com/v1beta1
+kind: InfisicalConnection
+metadata:
+  name: infisical
+  namespace: infisical
+spec:
+  # In-cluster address of the self-hosted Infisical instance (see infisical-app.yaml).
+  address: http://infisical.infisical.svc.cluster.local:8080

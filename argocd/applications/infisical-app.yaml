@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infisical
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts
+    chart: infisical-standalone
+    targetRevision: 1.10.0
+    helm:
+      releaseName: infisical
+      values: |
+        infisical:
+          fullnameOverride: infisical
+          # Kubernetes Secret (created manually, NOT in Git) holding AUTH_SECRET,
+          # ENCRYPTION_KEY and SITE_URL. See README.md for the bootstrap procedure.
+          kubeSecretRef: infisical-secrets
+
+        ingress:
+          enabled: true
+          hostName: infisical.thysmadev.fr
+          ingressClassName: traefik
+          nginx:
+            # The cluster already runs Traefik as ingress controller, no need for
+            # the bundled nginx controller from this chart.
+            enabled: false
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: "true"
+
+        postgresql:
+          enabled: true
+
+        redis:
+          enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: infisical
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

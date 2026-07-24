@@ -1,24 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sealed-secrets
+  name: infisical-operator
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
   source:
-    repoURL: https://bitnami-labs.github.io/sealed-secrets
-    chart: sealed-secrets
-    targetRevision: 2.16.1
+    repoURL: https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts
+    chart: secrets-operator
+    targetRevision: 0.11.5
     helm:
-      releaseName: sealed-secrets
-      values: |
-        fullnameOverride: sealed-secrets-controller
+      releaseName: infisical-secrets-operator
   destination:
     server: https://kubernetes.default.svc
-    namespace: kube-system
+    namespace: infisical
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

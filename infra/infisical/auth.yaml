@@ -1,0 +1,22 @@
+apiVersion: secrets.infisical.com/v1beta1
+kind: InfisicalAuth
+metadata:
+  name: machine-identity
+  namespace: infisical
+spec:
+  infisicalConnectionRef:
+    name: infisical
+    namespace: infisical
+  method: universal
+  universal:
+    # Kubernetes Secret (created manually, NOT in Git) holding the Universal Auth
+    # clientId/clientSecret of a Machine Identity granted access to the
+    # "k3s-gitops-lab" project. See README.md for the bootstrap procedure.
+    clientIdRef:
+      name: infisical-machine-identity
+      namespace: infisical
+      key: clientId
+    clientSecretRef:
+      name: infisical-machine-identity
+      namespace: infisical
+      key: clientSecret

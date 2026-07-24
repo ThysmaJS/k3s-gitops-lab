@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infra
+  name: infisical-config
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -10,15 +10,11 @@ spec:
   source:
     repoURL: https://github.com/ThysmaJS/k3s-gitops-lab.git
     targetRevision: HEAD
-    path: infra
-    directory:
-      recurse: true
-      exclude: '{cloudflared/**,infisical/**}'
+    path: infra/infisical
   destination:
     server: https://kubernetes.default.svc
+    namespace: infisical
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
