@@ -19,6 +19,17 @@ spec:
           # Kubernetes Secret (created manually, NOT in Git) holding AUTH_SECRET,
           # ENCRYPTION_KEY and SITE_URL. See README.md for the bootstrap procedure.
           kubeSecretRef: infisical-secrets
+          # Single replica + explicit request/limits: the cluster is 3 small nodes
+          # (2 vCPU / 4Gi each) already busy with ArgoCD/Harbor/monitoring, no room
+          # for the chart's HA default of 2 replicas with no memory request.
+          replicaCount: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
 
         ingress:
           enabled: true
@@ -34,9 +45,25 @@ spec:
 
         postgresql:
           enabled: true
+          primary:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 300m
+                memory: 256Mi
 
         redis:
           enabled: true
+          master:
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 150m
+                memory: 128Mi
   destination:
     server: https://kubernetes.default.svc
     namespace: infisical
