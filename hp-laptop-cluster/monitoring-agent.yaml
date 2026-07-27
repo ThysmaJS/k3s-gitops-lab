@@ -2,8 +2,8 @@
 # Ne stocke rien localement : scrape ce cluster et pousse tout vers le
 # Prometheus du hub (in-cluster) via remote_write. Pas de Grafana ici.
 #
-# À appliquer directement sur HP_laptop_cluster (pas géré par l'ArgoCD du hub) :
-#   kubectl apply -f hp-laptop-cluster/monitoring-agent.yaml
+# Déployé par ArgoCD (hub) sur le cluster distant HP_laptop_cluster —
+# voir argocd/applications/hp-monitoring-agent-app.yaml
 apiVersion: v1
 kind: Namespace
 metadata:
