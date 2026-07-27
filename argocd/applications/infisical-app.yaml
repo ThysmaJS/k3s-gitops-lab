@@ -20,7 +20,7 @@ spec:
           # ENCRYPTION_KEY and SITE_URL. See README.md for the bootstrap procedure.
           kubeSecretRef: infisical-secrets
           # Single replica: the cluster is now a single node (4 vCPU / 8Gi) also
-          # running ArgoCD/Harbor/monitoring, no room for the chart's HA default
+          # running ArgoCD/monitoring, no room for the chart's HA default
           # of 2 replicas. Memory limit raised from 512Mi after repeated OOMKilled
           # crashes on startup — steady-state usage observed around 700-800Mi.
           replicaCount: 1

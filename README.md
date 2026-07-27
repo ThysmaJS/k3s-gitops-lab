@@ -16,12 +16,9 @@ Cloudflare Tunnel (cloudflared)
 Traefik (Ingress Controller — intégré à k3s)
    │
    ├── argocd.thysmadev.fr    → ArgoCD
-   ├── harbor.thysmadev.fr    → Harbor (registry)
    ├── grafana.thysmadev.fr   → Grafana
    ├── headlamp.thysmadev.fr  → Headlamp (dashboard)
-   ├── infisical.thysmadev.fr → Infisical (secrets)
-   ├── giiveaway.fr           → Giiveaway Frontend
-   └── api.giiveaway.fr       → Giiveaway API
+   └── infisical.thysmadev.fr → Infisical (secrets)
 ```
 
 ---
@@ -38,10 +35,7 @@ ArgoCD orchestre tous les déploiements via le pattern **App of Apps** : une app
 | 0 | `infisical-operator` | Opérateur Kubernetes Infisical (CRDs + sync des secrets) |
 | 1 | `infisical-config` | `InfisicalConnection` + `InfisicalAuth` partagés (`infra/infisical/`) |
 | 1 | `infra` | Infrastructure transverse (cert-manager, cloudflared, ingresses, headlamp) |
-| 1 | `harbor` | Registry de conteneurs |
 | 1 | `monitoring` | Stack Prometheus + Grafana |
-| 2 | `authentapp` | Application d'authentification |
-| 2 | `giiveaway` | Application Giiveaway |
 
 ### Accès ArgoCD
 
@@ -120,48 +114,6 @@ Dashboards recommandés : **Kubernetes / Compute Resources / Cluster** pour une 
 
 ---
 
-## Registry — Harbor (`infra/harbor/`)
-
-Registry de conteneurs privé avec scan de vulnérabilités (Trivy).
-
-| URL | `https://harbor.thysmadev.fr` |
-|-----|-------------------------------|
-| Login | `admin` |
-| Chart Helm | `harbor` v1.14.0 |
-
-Les images des applications sont stockées ici et tirées via le secret `harbor-pull-secret` présent dans chaque namespace applicatif.
-
----
-
-## Applications
-
-### Giiveaway (`apps/giiveaway/`)
-
-Application de gestion de giveaways. Composée de :
-
-| Composant | Image | URL |
-|-----------|-------|-----|
-| Frontend | `harbor.thysmadev.fr/giiveaway/front` | `https://giiveaway.fr` |
-| API (Node.js) | `harbor.thysmadev.fr/giiveaway/api` | `https://api.giiveaway.fr` |
-| PostgreSQL | `postgres` | Interne |
-| pgAdmin | `pgadmin4` | Interne |
-
-Les secrets (DATABASE_URL, JWT, Brevo, Google OAuth, Cloudinary) sont gérés via **Infisical** et synchronisés dans le cluster par [`apps/giiveaway/infisical-secret.yaml`](apps/giiveaway/infisical-secret.yaml).
-
-### Authentapp (`authentapp/`)
-
-Application d'authentification Node.js avec JWT. Composée de :
-
-| Composant | Image | URL |
-|-----------|-------|-----|
-| API (Node.js) | `thysma/authent-app:1.0.0` | `authent-app.cluster.local` (interne) |
-| MongoDB | `mongo` | Interne |
-| Mongo Express | `mongo-express` | Interne |
-
-Tourne en **2 réplicas**. Les secrets MongoDB et JWT sont gérés via **Infisical**.
-
----
-
 ## Gestion des secrets — Infisical
 
 Les secrets ne sont plus chiffrés dans Git (Sealed Secrets a été retiré). Ils vivent dans une instance **Infisical self-hosted**, déployée dans le cluster, et sont synchronisés vers de vrais `Secret` Kubernetes par l'**Infisical Kubernetes Operator**.
@@ -174,7 +126,7 @@ Les secrets ne sont plus chiffrés dans Git (Sealed Secrets a été retiré). Il
 └───────────┬──────────────┘                   │ crée/maintient
             │ UI                               ▼
             ▼                         Secret Kubernetes natif
-   https://infisical.thysmadev.fr     (giiveaway-secrets, mongo-secret, …)
+   https://infisical.thysmadev.fr     (cloudflared-token, …)
 ```
 
 ### Composants
@@ -185,7 +137,7 @@ Les secrets ne sont plus chiffrés dans Git (Sealed Secrets a été retiré). Il
 | `infisical-operator` | 0 | Chart Helm `secrets-operator` (CRDs `InfisicalConnection`/`InfisicalAuth`/`InfisicalStaticSecret`) |
 | `infisical-config` | 1 | [`infra/infisical/`](infra/infisical/) : `InfisicalConnection` + `InfisicalAuth` partagés par toutes les apps |
 
-Chaque application définit ensuite ses propres `InfisicalStaticSecret` (ex. [`apps/giiveaway/infisical-secret.yaml`](apps/giiveaway/infisical-secret.yaml)), qui référencent le `InfisicalAuth` partagé et créent un `Secret` Kubernetes classique — aucune modification des `Deployment` existants n'a été nécessaire (`secretKeyRef`/`envFrom` pointent toujours vers les mêmes noms de secrets).
+Chaque application définit ensuite ses propres `InfisicalStaticSecret` (ex. [`infra/cloudflare-ddns/infisical-secret.yaml`](infra/cloudflare-ddns/infisical-secret.yaml)), qui référencent le `InfisicalAuth` partagé et créent un `Secret` Kubernetes classique — aucune modification des `Deployment` existants n'a été nécessaire (`secretKeyRef`/`envFrom` pointent toujours vers les mêmes noms de secrets).
 
 ### Bootstrap initial (une seule fois, hors Git)
 
@@ -201,7 +153,7 @@ Chaque application définit ensuite ses propres `InfisicalStaticSecret` (ex. [`a
 
    Sauvegarder `ENCRYPTION_KEY` en dehors du cluster (dans un password manager) : sans elle, les secrets stockés dans Postgres ne sont plus déchiffrables, même en cas de restauration de la base.
 
-2. Ajouter la route `infisical.thysmadev.fr` dans le tunnel Cloudflare (dashboard Zero Trust, comme pour `argocd`/`harbor`), puis laisser ArgoCD synchroniser `infisical` + `infisical-operator` (wave 0).
+2. Ajouter la route `infisical.thysmadev.fr` dans le tunnel Cloudflare (dashboard Zero Trust, comme pour `argocd`), puis laisser ArgoCD synchroniser `infisical` + `infisical-operator` (wave 0).
 
 3. Ouvrir `https://infisical.thysmadev.fr`, créer le compte admin et l'organisation via l'assistant de première connexion.
 
@@ -223,22 +175,15 @@ Chaque application définit ensuite ses propres `InfisicalStaticSecret` (ex. [`a
 
    | Secret Kubernetes | Chemin Infisical (env `prod`) |
    |--------------------|-------------------------------|
-   | `giiveaway/harbor-pull-secret` | `/giiveaway/harbor-pull-secret` (clé `dockerconfigjson`) |
-   | `giiveaway/giiveaway-secrets` | `/giiveaway/giiveaway-secrets` |
-   | `michelin/michelin-secrets` | `/michelin/michelin-secrets` |
-   | `authent-app/mongo-secret` | `/authent-app/mongo-secret` |
-   | `authent-app/authent-app-secrets` | `/authent-app/authent-app-secrets` |
    | `cloudflare-ddns/cloudflare-ddns-token` | `/cloudflare-ddns/cloudflare-ddns-token` |
    | `cloudflared/cloudflared-token` | `/cloudflared/cloudflared-token` |
-
-   > ⚠️ Le déploiement `apps/michelin/backend.yaml` référence un secret `backend-secret` (clé `DATABASE_URL`) qui n'a jamais été un Sealed Secret suivi dans Git — c'est un secret créé manuellement sur le cluster, préexistant à cette migration. Il n'est pas couvert par `michelin-secrets` ni par le script de migration ; à traiter séparément si besoin.
 
 9. Une fois les valeurs présentes dans Infisical, laisser ArgoCD synchroniser les apps (wave 2) : chaque `InfisicalStaticSecret` crée son `Secret` Kubernetes, identique en nom/clés à l'ancien Sealed Secret.
 
 ### Ajouter un nouveau secret
 
 1. Créer le chemin/les clés dans l'UI Infisical (projet `k3s-gitops-lab`, environnement `prod`).
-2. Ajouter un manifeste `InfisicalStaticSecret` dans le dossier de l'app concernée, sur le modèle de [`apps/giiveaway/infisical-secret.yaml`](apps/giiveaway/infisical-secret.yaml), en réutilisant le `InfisicalAuth` partagé (`machine-identity` / ns `infisical`).
+2. Ajouter un manifeste `InfisicalStaticSecret` dans le dossier de l'app concernée, sur le modèle de [`infra/cloudflare-ddns/infisical-secret.yaml`](infra/cloudflare-ddns/infisical-secret.yaml), en réutilisant le `InfisicalAuth` partagé (`machine-identity` / ns `infisical`).
 3. Committer — ArgoCD crée le `Secret` Kubernetes correspondant.
 
 ---
@@ -255,13 +200,10 @@ Chaque application définit ensuite ses propres `InfisicalStaticSecret` (ex. [`a
 │   ├── cloudflare-ddns/    # Mise à jour DNS dynamique Cloudflare
 │   ├── infisical/          # InfisicalConnection + InfisicalAuth partagés
 │   ├── headlamp/           # Dashboard Kubernetes + comptes utilisateurs
-│   ├── harbor/             # Values Helm du registry
 │   ├── ingresses/          # Ingresses publics (*.thysmadev.fr)
 │   └── monitoring/         # Values Helm Prometheus + Grafana
 ├── apps/
-│   ├── giiveaway/          # Manifests de l'app Giiveaway
-│   └── michelin/           # Manifests de l'app Michelin
-├── authentapp/              # Manifests de l'app Authentapp
+│   └── minecraft-cobbleverse/  # Manifests du serveur Minecraft
 └── scripts/
     └── migrate-secrets-to-infisical.sh  # Migration des anciens secrets vers Infisical
 ```

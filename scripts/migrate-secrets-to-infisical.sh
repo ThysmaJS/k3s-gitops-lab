@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copies the plaintext value of every Secret currently decrypted on the cluster by the
 # Sealed Secrets controller into Infisical, at the paths expected by the
-# InfisicalStaticSecret manifests (apps/*/infisical-secret.yaml, authentapp/infisical-secret.yaml,
+# InfisicalStaticSecret manifests (apps/*/infisical-secret.yaml,
 # infra/cloudflare*/infisical-secret.yaml).
 #
 # Prerequisites:
@@ -24,10 +24,6 @@ ENV_SLUG="${ENV_SLUG:-prod}"
 
 # namespace:secretName:infisicalPath
 MAPPINGS=(
-  "giiveaway:giiveaway-secrets:/giiveaway/giiveaway-secrets"
-  "michelin:michelin-secrets:/michelin/michelin-secrets"
-  "authent-app:mongo-secret:/authent-app/mongo-secret"
-  "authent-app:authent-app-secrets:/authent-app/authent-app-secrets"
   "cloudflare-ddns:cloudflare-ddns-token:/cloudflare-ddns/cloudflare-ddns-token"
   "cloudflared:cloudflared-token:/cloudflared/cloudflared-token"
 )
@@ -49,11 +45,5 @@ for mapping in "${MAPPINGS[@]}"; do
     push_secret "$namespace" "$secret" "$path" "$key" "$key"
   done
 done
-
-# harbor-pull-secret is a dockerconfigjson Secret: the single key is literally ".dockerconfigjson".
-# It's stored in Infisical under the plain key "dockerconfigjson" (no leading dot), which the
-# InfisicalStaticSecret template in apps/giiveaway/infisical-secret.yaml renames back on sync.
-echo "== giiveaway/harbor-pull-secret -> /giiveaway/harbor-pull-secret =="
-push_secret giiveaway harbor-pull-secret /giiveaway/harbor-pull-secret dockerconfigjson '.dockerconfigjson'
 
 echo "Done. Verify the values in the Infisical UI, then apply the InfisicalStaticSecret manifests."
