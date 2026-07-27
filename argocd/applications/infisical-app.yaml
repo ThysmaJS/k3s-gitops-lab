@@ -19,17 +19,18 @@ spec:
           # Kubernetes Secret (created manually, NOT in Git) holding AUTH_SECRET,
           # ENCRYPTION_KEY and SITE_URL. See README.md for the bootstrap procedure.
           kubeSecretRef: infisical-secrets
-          # Single replica + explicit request/limits: the cluster is 3 small nodes
-          # (2 vCPU / 4Gi each) already busy with ArgoCD/Harbor/monitoring, no room
-          # for the chart's HA default of 2 replicas with no memory request.
+          # Single replica: the cluster is now a single node (4 vCPU / 8Gi) also
+          # running ArgoCD/Harbor/monitoring, no room for the chart's HA default
+          # of 2 replicas. Memory limit raised from 512Mi after repeated OOMKilled
+          # crashes on startup.
           replicaCount: 1
           resources:
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 384Mi
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 1Gi
 
         ingress:
           enabled: true
