@@ -24,8 +24,15 @@ kubelet:
         targetLabel: metrics_path
 
 prometheus:
+  # NodePort so satellite clusters (e.g. HP_laptop_cluster) can remote_write
+  # metrics over the LAN without going through the public Cloudflare tunnel.
+  service:
+    type: NodePort
+    nodePort: 30090
   prometheusSpec:
     retention: 7d
+    # Accepts remote_write pushes from satellite clusters' Prometheus agents.
+    enableRemoteWriteReceiver: true
     resources:
       requests:
         memory: "400Mi"
