@@ -33,6 +33,11 @@ prometheus:
     retention: 7d
     # Accepts remote_write pushes from satellite clusters' Prometheus agents.
     enableRemoteWriteReceiver: true
+    # Labels this cluster's own metrics so they're distinguishable from
+    # satellites in multi-cluster dashboards (hp-laptop-cluster sets its own
+    # via hp-laptop-cluster/monitoring-agent.yaml).
+    externalLabels:
+      cluster: in-cluster
     resources:
       requests:
         memory: "400Mi"
