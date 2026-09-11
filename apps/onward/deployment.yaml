@@ -18,9 +18,10 @@ spec:
         - name: ghcr-pull-secret
       initContainers:
         - name: migrate
+          # Tag mis à jour automatiquement par la CI (.github/workflows/deploy.yml
+          # du repo onward) à chaque push sur main — un commit SHA immuable,
+          # jamais réécrit sur le même tag.
           image: ghcr.io/thysmajs/onward:v1
-          # Pas de CI ici : le tag peut être republié sur le même nom
-          # pendant l'itération manuelle — éviter un pull périmé.
           imagePullPolicy: Always
           command: ["node", "scripts/migrate.mjs"]
           env:
