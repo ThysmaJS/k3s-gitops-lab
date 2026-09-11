@@ -21,7 +21,7 @@ spec:
           # Tag mis à jour automatiquement par la CI (.github/workflows/deploy.yml
           # du repo onward) à chaque push sur main — un commit SHA immuable,
           # jamais réécrit sur le même tag.
-          image: ghcr.io/thysmajs/onward:7ed6f926fc8ce292bae65d06cd3e1217ab0cba3e
+          image: ghcr.io/thysmajs/onward:1e54200c9ab9a8eb25709f23a514a1ebb11b7cf8
           imagePullPolicy: Always
           command: ["node", "scripts/migrate.mjs"]
           env:
@@ -32,7 +32,7 @@ spec:
                   key: database-url
       containers:
         - name: onward
-          image: ghcr.io/thysmajs/onward:7ed6f926fc8ce292bae65d06cd3e1217ab0cba3e
+          image: ghcr.io/thysmajs/onward:1e54200c9ab9a8eb25709f23a514a1ebb11b7cf8
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
