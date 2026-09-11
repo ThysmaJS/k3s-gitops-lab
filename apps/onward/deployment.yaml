@@ -18,7 +18,12 @@ spec:
       # d'imagePullSecrets nécessaire.
       initContainers:
         - name: migrate
-          image: registry.registry.svc.cluster.local:5000/onward:v1
+          # containerd (sur le node) pull l'image, pas le pod — la DNS
+          # interne du cluster (*.svc.cluster.local) n'est pas résolue à
+          # ce niveau. Adresse NodePort directe à la place (voir
+          # /etc/rancher/k3s/registries.yaml pour la config HTTP + le
+          # commentaire dans infra/registry/registry.yaml).
+          image: 192.168.0.202:30500/onward:v1
           # Pas de CI ici : le tag peut être republié sur le même nom
           # pendant l'itération manuelle — éviter un pull périmé.
           imagePullPolicy: Always
@@ -31,7 +36,12 @@ spec:
                   key: database-url
       containers:
         - name: onward
-          image: registry.registry.svc.cluster.local:5000/onward:v1
+          # containerd (sur le node) pull l'image, pas le pod — la DNS
+          # interne du cluster (*.svc.cluster.local) n'est pas résolue à
+          # ce niveau. Adresse NodePort directe à la place (voir
+          # /etc/rancher/k3s/registries.yaml pour la config HTTP + le
+          # commentaire dans infra/registry/registry.yaml).
+          image: 192.168.0.202:30500/onward:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

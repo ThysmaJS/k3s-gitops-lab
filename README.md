@@ -72,7 +72,12 @@ docker build -t <node-ip>:30500/<app>:<tag> .
 docker push <node-ip>:30500/<app>:<tag>
 ```
 
-Les pods internes s'y réfèrent via `registry.registry.svc.cluster.local:5000`.
+**Deux prérequis côté client et côté cluster**, sinon le push/pull échoue :
+
+1. Machine qui build/push : autoriser ce registre en HTTP non sécurisé (`insecure-registries` du démon Docker/OrbStack/Docker Desktop) pour `<node-ip>:30500`.
+2. Chaque node k3s : `/etc/rancher/k3s/registries.yaml` + `systemctl restart k3s` — voir le commentaire en tête de [`infra/registry/registry.yaml`](infra/registry/registry.yaml). Sans ça, `containerd` (qui fait le pull, pas le pod) ne sait pas joindre le registre en HTTP.
+
+Les manifests d'app référencent l'image par **IP:port de node** (ex. `192.168.0.202:30500/onward:v1`), jamais par le nom de service interne `registry.registry.svc.cluster.local` — ce nom n'est résolu que dans l'espace réseau d'un pod, pas par containerd sur le node au moment du pull.
 
 ### Headlamp
 

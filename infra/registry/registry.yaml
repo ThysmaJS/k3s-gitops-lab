@@ -1,6 +1,23 @@
 # Registre d'images léger (~50Mi RAM) — remplace Harbor (démonté) pour les
 # quelques apps custom du homelab. Pas d'auth : accessible seulement en LAN
 # via le NodePort, jamais exposé sur le tunnel Cloudflare.
+#
+# IMPORTANT — à faire une seule fois sur CHAQUE node (containerd pull les
+# images depuis le node lui-même, pas depuis l'intérieur d'un pod : la DNS
+# interne du cluster ne s'applique pas, et le registre est en HTTP simple) :
+#
+#   sudo tee /etc/rancher/k3s/registries.yaml <<'EOF'
+#   mirrors:
+#     "192.168.0.201:30500":
+#       endpoint: ["http://192.168.0.201:30500"]
+#     "192.168.0.202:30500":
+#       endpoint: ["http://192.168.0.202:30500"]
+#   EOF
+#   sudo systemctl restart k3s
+#
+# Les manifests d'apps référencent l'image par IP:port de node
+# (ex. 192.168.0.202:30500/onward:v1), jamais par le nom de service
+# interne registry.registry.svc.cluster.local.
 apiVersion: v1
 kind: Namespace
 metadata:
