@@ -14,16 +14,11 @@ spec:
       labels:
         app: onward
     spec:
-      # Registre interne, sans auth (voir infra/registry) — pas
-      # d'imagePullSecrets nécessaire.
+      imagePullSecrets:
+        - name: ghcr-pull-secret
       initContainers:
         - name: migrate
-          # containerd (sur le node) pull l'image, pas le pod — la DNS
-          # interne du cluster (*.svc.cluster.local) n'est pas résolue à
-          # ce niveau. Adresse NodePort directe à la place (voir
-          # /etc/rancher/k3s/registries.yaml pour la config HTTP + le
-          # commentaire dans infra/registry/registry.yaml).
-          image: 192.168.0.202:30500/onward:v1
+          image: ghcr.io/thysmajs/onward:v1
           # Pas de CI ici : le tag peut être republié sur le même nom
           # pendant l'itération manuelle — éviter un pull périmé.
           imagePullPolicy: Always
@@ -36,12 +31,7 @@ spec:
                   key: database-url
       containers:
         - name: onward
-          # containerd (sur le node) pull l'image, pas le pod — la DNS
-          # interne du cluster (*.svc.cluster.local) n'est pas résolue à
-          # ce niveau. Adresse NodePort directe à la place (voir
-          # /etc/rancher/k3s/registries.yaml pour la config HTTP + le
-          # commentaire dans infra/registry/registry.yaml).
-          image: 192.168.0.202:30500/onward:v1
+          image: ghcr.io/thysmajs/onward:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

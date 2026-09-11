@@ -63,21 +63,17 @@ Tunnel Cloudflare Zero Trust permettant d'exposer les services du cluster sur In
 
 Ingress controller natif de k3s. Toutes les routes HTTP/HTTPS passent par lui. Entrypoint utilisé : `websecure` (443).
 
-### Registre d'images (`infra/registry/`)
+### Registre d'images
 
-Registre `registry:2` sans auth (~50Mi RAM), en remplacement de Harbor (démonté). Accessible uniquement en LAN via NodePort `30500` — jamais exposé sur le tunnel Cloudflare. Sert à pousser les images des apps custom (ex. `onward`) construites en local, faute de pipeline CI pour l'instant.
+Pas de registre self-hosted (Harbor a été démonté ; un `registry:2` interne en HTTP a été testé pour `onward` mais abandonné — `containerd` refuse le HTTP par défaut, ce qui obligeait à configurer `/etc/rancher/k3s/registries.yaml` sur chaque node). À la place : **GitHub Container Registry** (`ghcr.io`), en dépôt privé sur le même compte GitHub que ce repo.
 
 ```bash
-docker build -t <node-ip>:30500/<app>:<tag> .
-docker push <node-ip>:30500/<app>:<tag>
+echo "<PAT write:packages>" | docker login ghcr.io -u ThysmaJS --password-stdin
+docker build -t ghcr.io/thysmajs/<app>:<tag> .
+docker push ghcr.io/thysmajs/<app>:<tag>
 ```
 
-**Deux prérequis côté client et côté cluster**, sinon le push/pull échoue :
-
-1. Machine qui build/push : autoriser ce registre en HTTP non sécurisé (`insecure-registries` du démon Docker/OrbStack/Docker Desktop) pour `<node-ip>:30500`.
-2. Chaque node k3s : `/etc/rancher/k3s/registries.yaml` + `systemctl restart k3s` — voir le commentaire en tête de [`infra/registry/registry.yaml`](infra/registry/registry.yaml). Sans ça, `containerd` (qui fait le pull, pas le pod) ne sait pas joindre le registre en HTTP.
-
-Les manifests d'app référencent l'image par **IP:port de node** (ex. `192.168.0.202:30500/onward:v1`), jamais par le nom de service interne `registry.registry.svc.cluster.local` — ce nom n'est résolu que dans l'espace réseau d'un pod, pas par containerd sur le node au moment du pull.
+TLS public valide par défaut : aucune configuration `insecure-registries` ni `registries.yaml` nécessaire. Le cluster a besoin d'un `imagePullSecret` (`kubernetes.io/dockerconfigjson`) pour un dépôt privé — voir [`apps/onward/infisical-secret.yaml`](apps/onward/infisical-secret.yaml) (`ghcr-pull-secret`), même patron que l'ancien `harbor-pull-secret`.
 
 ### Headlamp
 
@@ -217,8 +213,7 @@ Chaque application définit ensuite ses propres `InfisicalStaticSecret` (ex. [`i
 │   ├── infisical/          # InfisicalConnection + InfisicalAuth partagés
 │   ├── headlamp/           # Dashboard Kubernetes + comptes utilisateurs
 │   ├── ingresses/          # Ingresses publics (*.thysmadev.fr)
-│   ├── monitoring/         # Values Helm Prometheus + Grafana
-│   └── registry/           # Registre d'images interne (registry:2)
+│   └── monitoring/         # Values Helm Prometheus + Grafana
 ├── apps/
 │   ├── minecraft-cobbleverse/  # Manifests du serveur Minecraft
 │   └── onward/                 # Annuaire du don solidaire (Next.js + Postgres/PostGIS)
