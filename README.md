@@ -63,6 +63,17 @@ Tunnel Cloudflare Zero Trust permettant d'exposer les services du cluster sur In
 
 Ingress controller natif de k3s. Toutes les routes HTTP/HTTPS passent par lui. Entrypoint utilisé : `websecure` (443).
 
+### Registre d'images (`infra/registry/`)
+
+Registre `registry:2` sans auth (~50Mi RAM), en remplacement de Harbor (démonté). Accessible uniquement en LAN via NodePort `30500` — jamais exposé sur le tunnel Cloudflare. Sert à pousser les images des apps custom (ex. `onward`) construites en local, faute de pipeline CI pour l'instant.
+
+```bash
+docker build -t <node-ip>:30500/<app>:<tag> .
+docker push <node-ip>:30500/<app>:<tag>
+```
+
+Les pods internes s'y réfèrent via `registry.registry.svc.cluster.local:5000`.
+
 ### Headlamp
 
 Dashboard Kubernetes accessible via navigateur.
@@ -201,9 +212,11 @@ Chaque application définit ensuite ses propres `InfisicalStaticSecret` (ex. [`i
 │   ├── infisical/          # InfisicalConnection + InfisicalAuth partagés
 │   ├── headlamp/           # Dashboard Kubernetes + comptes utilisateurs
 │   ├── ingresses/          # Ingresses publics (*.thysmadev.fr)
-│   └── monitoring/         # Values Helm Prometheus + Grafana
+│   ├── monitoring/         # Values Helm Prometheus + Grafana
+│   └── registry/           # Registre d'images interne (registry:2)
 ├── apps/
-│   └── minecraft-cobbleverse/  # Manifests du serveur Minecraft
+│   ├── minecraft-cobbleverse/  # Manifests du serveur Minecraft
+│   └── onward/                 # Annuaire du don solidaire (Next.js + Postgres/PostGIS)
 └── scripts/
     └── migrate-secrets-to-infisical.sh  # Migration des anciens secrets vers Infisical
 ```

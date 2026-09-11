@@ -1,0 +1,25 @@
+# Exposition publique via le tunnel Cloudflare — même patron que
+# argocd-ingress-public / kite-ingress-public (infra/ingresses/). La route
+# onward.thysmadev.fr doit aussi être ajoutée côté tableau de bord
+# Cloudflare Zero Trust (tunnel), hors Git.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: onward-ingress-public
+  namespace: onward
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: onward.thysmadev.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: onward
+                port:
+                  number: 80
