@@ -215,6 +215,7 @@ Chaque application définit ensuite ses propres `InfisicalStaticSecret` (ex. [`i
 │   ├── ingresses/          # Ingresses publics (*.thysmadev.fr)
 │   └── monitoring/         # Values Helm Prometheus + Grafana
 ├── apps/
+│   ├── freeroom/                # Réservation de salles ESGI (Next.js + Postgres)
 │   ├── minecraft-cobbleverse/  # Manifests du serveur Minecraft
 │   └── onward/                 # Annuaire du don solidaire (Next.js + Postgres/PostGIS)
 └── scripts/

@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: freeroom-postgres-data
+  namespace: freeroom
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: freeroom
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: freeroom-postgres
+  template:
+    metadata:
+      labels:
+        app: freeroom-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - name: POSTGRES_DB
+              value: freeroom
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: freeroom-secrets
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: freeroom-secrets
+                  key: postgres-password
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "384Mi"
+              cpu: "300m"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: freeroom-postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: freeroom
+spec:
+  selector:
+    app: freeroom-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432

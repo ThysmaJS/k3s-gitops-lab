@@ -1,0 +1,25 @@
+# Exposition publique via le tunnel Cloudflare — même patron que
+# onward-ingress-public (apps/onward/). La route freeroom.thysmadev.fr
+# doit aussi être ajoutée côté tableau de bord Cloudflare Zero Trust
+# (tunnel), hors Git.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: freeroom-ingress-public
+  namespace: freeroom
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: freeroom.thysmadev.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: freeroom
+                port:
+                  number: 80
