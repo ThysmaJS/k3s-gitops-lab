@@ -25,7 +25,7 @@ spec:
           # Tag à mettre à jour manuellement (ou via CI côté repo freeroom,
           # même patron que .github/workflows/deploy.yml d'onward) à chaque
           # nouvelle image poussée sur ghcr.io.
-          image: ghcr.io/thysmajs/freeroom:810c4ae307cb775f3dc97abc50b88baf43d3accd
+          image: ghcr.io/thysmajs/freeroom:1c747fd88a7fb829f1253861ad5529143def3ddd
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
