@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pgadmin
+  namespace: argocd
+  annotations:
+    # Même wave que freeroom : dépend du secret Infisical (pgadmin-secrets)
+    # et du namespace freeroom déjà créé par l'app freeroom elle-même.
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ThysmaJS/k3s-gitops-lab.git
+    targetRevision: HEAD
+    path: apps/pgadmin
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: freeroom
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

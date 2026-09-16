@@ -1,0 +1,29 @@
+# Même patron que apps/freeroom/ingress.yaml — exposition publique via le
+# tunnel Cloudflare. La route pgadmin.thysmadev.fr doit aussi être ajoutée
+# côté tableau de bord Cloudflare Zero Trust (tunnel), hors Git.
+#
+# Volontairement sans protection supplémentaire (pas de Basic Auth, pas de
+# liste blanche d'IP) — seul le login pgAdmin protège l'accès. Choix assumé,
+# mais ça vaut le coup de mettre un mot de passe pgAdmin costaud dans
+# Infisical (/freeroom/pgadmin-secrets) puisque c'est la seule barrière.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin-ingress-public
+  namespace: freeroom
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: pgadmin.thysmadev.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pgadmin
+                port:
+                  number: 80
