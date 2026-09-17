@@ -1,0 +1,189 @@
+# Chargé automatiquement par le sidecar Grafana de kube-prometheus-stack
+# (activé par défaut dans le chart) — tout ConfigMap labellisé
+# grafana_dashboard: "1" est détecté et importé sans action manuelle.
+#
+# ⚠️ Si le dashboard n'apparaît pas dans Grafana après sync : le sidecar
+# peut être restreint à surveiller uniquement la namespace `monitoring`.
+# Si c'est le cas, il faudra soit élargir sa recherche (values.yaml,
+# grafana.sidecar.dashboards.searchNamespace), soit déplacer ce ConfigMap
+# dans la namespace `monitoring`.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freeroom-dashboard
+  namespace: freeroom
+  labels:
+    grafana_dashboard: "1"
+data:
+  freeroom.json: |
+    {
+      "title": "FreeRoom",
+      "uid": "freeroom-overview",
+      "tags": ["freeroom"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "editable": true,
+      "refresh": "30s",
+      "time": { "from": "now-6h", "to": "now" },
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Utilisateurs",
+          "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            { "expr": "sum(freeroom_users_total)", "legendFormat": "Utilisateurs", "refId": "A" }
+          ],
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "cyan" },
+              "unit": "short"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Réservations totales",
+          "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            { "expr": "freeroom_bookings_total", "legendFormat": "Réservations", "refId": "A" }
+          ],
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "blue" },
+              "unit": "short"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Réservations à venir",
+          "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            { "expr": "freeroom_bookings_upcoming_total", "legendFormat": "À venir", "refId": "A" }
+          ],
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "green" },
+              "unit": "short"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Salles configurées",
+          "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            { "expr": "freeroom_rooms_total", "legendFormat": "Salles", "refId": "A" }
+          ],
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "textMode": "value_and_name",
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "fixed", "fixedColor": "purple" },
+              "unit": "short"
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 5,
+          "type": "piechart",
+          "title": "Utilisateurs par rôle",
+          "gridPos": { "h": 10, "w": 8, "x": 0, "y": 6 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            { "expr": "freeroom_users_total", "legendFormat": "{{role}}", "refId": "A" }
+          ],
+          "options": {
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "pieType": "donut",
+            "displayLabels": ["percent", "value"],
+            "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] }
+          },
+          "fieldConfig": {
+            "defaults": { "unit": "short" },
+            "overrides": []
+          }
+        },
+        {
+          "id": 6,
+          "type": "timeseries",
+          "title": "Réservations dans le temps",
+          "gridPos": { "h": 10, "w": 16, "x": 8, "y": 6 },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "targets": [
+            { "expr": "freeroom_bookings_total", "legendFormat": "Total", "refId": "A" },
+            { "expr": "freeroom_bookings_upcoming_total", "legendFormat": "À venir", "refId": "B" }
+          ],
+          "options": {
+            "legend": { "displayMode": "list", "placement": "bottom" },
+            "tooltip": { "mode": "multi" }
+          },
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 2,
+                "fillOpacity": 10,
+                "spanNulls": true,
+                "pointSize": 5
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              { "matcher": { "id": "byName", "options": "Total" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } }] },
+              { "matcher": { "id": "byName", "options": "À venir" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }] }
+            ]
+          }
+        }
+      ],
+      "templating": {
+        "list": [
+          {
+            "name": "datasource",
+            "type": "datasource",
+            "query": "prometheus",
+            "current": {},
+            "hide": 0
+          }
+        ]
+      }
+    }
