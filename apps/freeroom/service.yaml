@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: freeroom
   namespace: freeroom
+  labels:
+    app: freeroom
 spec:
   selector:
     app: freeroom
