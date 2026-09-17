@@ -1,14 +1,9 @@
 # Nécessite le Prometheus Operator (déjà installé via infra/monitoring —
 # kube-prometheus-stack, vu dans infra/monitoring/values.yaml).
 #
-# ⚠️ À VÉRIFIER avant de compter dessus : selon la config exacte de ta
-# Prometheus, elle peut n'écouter QUE les ServiceMonitor portant un label
-# précis (souvent `release: <nom-du-helm-release>`), au lieu de tous les
-# ServiceMonitor du cluster. Vérifie avec :
-#   kubectl get prometheus -A -o jsonpath='{.items[0].spec.serviceMonitorSelector}'
-# Si la réponse n'est pas vide (ex: {"matchLabels":{"release":"kube-prom-stack"}}),
-# ajoute le même label ci-dessous dans `metadata.labels`, sinon Prometheus
-# ignorera silencieusement ce ServiceMonitor.
+# Prometheus n'écoute que les ServiceMonitor portant release: monitoring
+# (vérifié : kubectl get prometheus -A -o jsonpath='{.items[0].spec.serviceMonitorSelector}'
+# → {"matchLabels":{"release":"monitoring"}}) — d'où le label ci-dessous.
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -16,7 +11,7 @@ metadata:
   namespace: freeroom
   labels:
     app: freeroom
-    # release: <à compléter si nécessaire, voir commentaire ci-dessus>
+    release: monitoring
 spec:
   selector:
     matchLabels:
