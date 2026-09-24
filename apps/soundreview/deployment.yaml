@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soundreview
+  namespace: soundreview
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: soundreview
+  template:
+    metadata:
+      labels:
+        app: soundreview
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull-secret
+      containers:
+        - name: soundreview
+          # Tag mis à jour automatiquement par la CI du dépôt soundreview
+          # (.github/workflows/deploy.yml) à chaque push sur main.
+          #
+          # Pas d'initContainer de migration, contrairement à onward : le schéma
+          # vit chez Supabase et s'applique par `supabase db push`, hors cluster.
+          image: ghcr.io/thysmajs/soundreview-web:PREMIER_DEPLOIEMENT
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            # Les NEXT_PUBLIC_* ne figurent pas ici : elles sont inlinées dans
+            # le bundle au build de l'image (arguments de build de la CI). Les
+            # définir au runtime n'aurait aucun effet.
+            - name: SUPABASE_SERVICE_ROLE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: soundreview-secrets
+                  key: supabase-service-role-key
+            - name: POSTHOG_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: soundreview-secrets
+                  key: posthog-api-key
+                  optional: true
+            - name: POSTHOG_HOST
+              value: https://eu.i.posthog.com
+            - name: NODE_ENV
+              value: "production"
+          readinessProbe:
+            httpGet:
+              path: /connexion
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /connexion
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "384Mi"
+              cpu: "300m"

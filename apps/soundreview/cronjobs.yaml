@@ -1,0 +1,125 @@
+# Les deux exécutions planifiées du worker. Même image, seule la commande
+# change — elle est passée en `args`, l'ENTRYPOINT de l'image étant
+# `tsx src/index.ts`.
+#
+# Les deux commandes sont idempotentes (vérifié en les lançant deux fois de
+# suite) : une revisite déjà notifiée porte `push_envoye_at` et n'est pas
+# reprise. Un rejeu après échec ne double donc pas les envois.
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: soundreview-quotidien
+  namespace: soundreview
+spec:
+  # 9h00 heure de Paris : les revisites échues de la nuit sont arbitrées et les
+  # rappels partent au réveil, pas au milieu de la nuit.
+  schedule: "0 9 * * *"
+  timeZone: Europe/Paris
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: ghcr-pull-secret
+          containers:
+            - name: worker
+              image: ghcr.io/thysmajs/soundreview-worker:PREMIER_DEPLOIEMENT
+              imagePullPolicy: Always
+              args: ["quotidien"]
+              envFrom:
+                - configMapRef:
+                    name: soundreview-worker-config
+              env:
+                - name: SUPABASE_SERVICE_ROLE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: supabase-service-role-key
+                - name: BREVO_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: brevo-api-key
+                - name: VAPID_PRIVATE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: vapid-private-key
+                - name: POSTHOG_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: posthog-api-key
+                      optional: true
+              resources:
+                requests:
+                  memory: "96Mi"
+                  cpu: "50m"
+                limits:
+                  memory: "256Mi"
+                  cpu: "300m"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: soundreview-hebdomadaire
+  namespace: soundreview
+spec:
+  # Vendredi 18h00 heure de Paris : fin de semaine, moment où l'on a le temps
+  # de réécouter un album.
+  schedule: "0 18 * * 5"
+  timeZone: Europe/Paris
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: ghcr-pull-secret
+          containers:
+            - name: worker
+              image: ghcr.io/thysmajs/soundreview-worker:PREMIER_DEPLOIEMENT
+              imagePullPolicy: Always
+              args: ["hebdomadaire"]
+              envFrom:
+                - configMapRef:
+                    name: soundreview-worker-config
+              env:
+                - name: SUPABASE_SERVICE_ROLE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: supabase-service-role-key
+                - name: BREVO_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: brevo-api-key
+                - name: VAPID_PRIVATE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: vapid-private-key
+                - name: POSTHOG_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: posthog-api-key
+                      optional: true
+              resources:
+                requests:
+                  memory: "96Mi"
+                  cpu: "50m"
+                limits:
+                  memory: "256Mi"
+                  cpu: "300m"

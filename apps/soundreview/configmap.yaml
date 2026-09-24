@@ -1,0 +1,17 @@
+# Configuration non sensible du worker. Ces valeurs sont publiques : l'URL du
+# projet Supabase, l'adresse d'expédition et la clé VAPID publique circulent de
+# toute façon en clair. Les mettre ici plutôt que dans Infisical garde le
+# coffre limité à ce qui doit vraiment être protégé.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: soundreview-worker-config
+  namespace: soundreview
+data:
+  SUPABASE_URL: https://bjdeooqdqgqtqteojfne.supabase.co
+  SITE_URL: https://soundreview.thysmadev.fr
+  EMAIL_EXPEDITEUR_NOM: Soundreview
+  EMAIL_EXPEDITEUR_ADRESSE: bonjour@thysmadev.fr
+  VAPID_PUBLIC_KEY: BCqPpuA7Zg1Ze8uPq3kGL463aun3j-z8wRtMF_andsKXNnVAjbVvGagpEJ6zVmToG-W3jM-RN1IwrlA4me9zF9M
+  VAPID_SUJET: mailto:bonjour@thysmadev.fr
+  POSTHOG_HOST: https://eu.i.posthog.com

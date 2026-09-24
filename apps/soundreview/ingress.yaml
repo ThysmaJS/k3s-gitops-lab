@@ -1,0 +1,24 @@
+# Exposition publique via le tunnel Cloudflare — même patron qu'onward. La
+# route soundreview.thysmadev.fr doit aussi être ajoutée côté tableau de bord
+# Cloudflare Zero Trust (tunnel), hors Git.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: soundreview-ingress-public
+  namespace: soundreview
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: soundreview.thysmadev.fr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: soundreview
+                port:
+                  number: 80
