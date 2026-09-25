@@ -29,7 +29,7 @@ spec:
             - name: ghcr-pull-secret
           containers:
             - name: worker
-              image: ghcr.io/thysmajs/soundreview-worker:8e14c3ef9ad9711c3a0827f9482194c8542cd38d
+              image: ghcr.io/thysmajs/soundreview-worker:dbcc29f5d5ad50c96fdd419a2c93306293353e89
               imagePullPolicy: Always
               args: ["quotidien"]
               envFrom:
@@ -88,7 +88,7 @@ spec:
             - name: ghcr-pull-secret
           containers:
             - name: worker
-              image: ghcr.io/thysmajs/soundreview-worker:8e14c3ef9ad9711c3a0827f9482194c8542cd38d
+              image: ghcr.io/thysmajs/soundreview-worker:dbcc29f5d5ad50c96fdd419a2c93306293353e89
               imagePullPolicy: Always
               args: ["hebdomadaire"]
               envFrom:
