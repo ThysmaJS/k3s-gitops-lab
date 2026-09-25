@@ -23,7 +23,7 @@ spec:
           #
           # Pas d'initContainer de migration, contrairement à onward : le schéma
           # vit chez Supabase et s'applique par `supabase db push`, hors cluster.
-          image: ghcr.io/thysmajs/soundreview-web:dc2c8b9069ebb492eb650294e2f9780636952d79
+          image: ghcr.io/thysmajs/soundreview-web:6b1044a152c2bcef23a72abd4a6c1431886d9106
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
