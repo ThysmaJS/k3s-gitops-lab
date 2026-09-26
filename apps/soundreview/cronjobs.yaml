@@ -2,6 +2,12 @@
 # change — elle est passée en `args`, l'ENTRYPOINT de l'image étant
 # `tsx src/index.ts`.
 #
+# Les tags d'image sont réécrits par la CI à chaque déploiement. En ajoutant un
+# CronJob, recopier le tag que portent déjà les autres : un placeholder serait
+# synchronisé tel quel par ArgoCD avant le passage de la CI, et un Job créé
+# entre-temps garde sa spec pour toujours — corriger le CronJob ensuite ne le
+# répare pas, il faut supprimer le Job.
+#
 # Les trois commandes sont idempotentes (vérifié en les lançant deux fois de
 # suite) : une revisite déjà notifiée porte `push_envoye_at` et n'est pas
 # reprise, une notification partie porte `envoye_at`. Un rejeu après échec ne
@@ -149,6 +155,16 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 1
+      # Un Job qui n'aboutit pas est tué avant le passage suivant.
+      #
+      # Sans cette limite, `concurrencyPolicy: Forbid` se retourne contre nous :
+      # un Job bloqué — image introuvable, réseau coupé — reste « actif »
+      # indéfiniment et empêche tous les passages suivants de démarrer. La tâche
+      # s'arrête alors complètement, sans rien signaler d'autre qu'un pod en
+      # attente. C'est exactement ce qui est arrivé le 26/09/2026 avec un tag
+      # d'image erroné. Quatre minutes : moins que la période, donc le créneau
+      # est toujours libre au tic suivant.
+      activeDeadlineSeconds: 240
       template:
         spec:
           restartPolicy: OnFailure
