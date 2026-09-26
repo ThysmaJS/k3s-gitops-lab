@@ -58,10 +58,16 @@ spec:
               port: 3000
             initialDelaySeconds: 20
             periodSeconds: 30
+          # Le rendu serveur de Next est en rafales : une page se rend en une
+          # poussée de CPU de quelques centaines de millisecondes, puis plus
+          # rien. Une *limite* à 300m étranglait précisément cette poussée —
+          # le conteneur était mis en attente par le noyau au moment exact où
+          # l'utilisateur attendait sa page. La réservation reste modeste pour
+          # ne pas monopoliser un nœud ; c'est le plafond qui devait monter.
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "50m"
+              memory: "192Mi"
+              cpu: "100m"
             limits:
-              memory: "384Mi"
-              cpu: "300m"
+              memory: "640Mi"
+              cpu: "1500m"

@@ -1,10 +1,11 @@
-# Les deux exécutions planifiées du worker. Même image, seule la commande
+# Les trois exécutions planifiées du worker. Même image, seule la commande
 # change — elle est passée en `args`, l'ENTRYPOINT de l'image étant
 # `tsx src/index.ts`.
 #
-# Les deux commandes sont idempotentes (vérifié en les lançant deux fois de
+# Les trois commandes sont idempotentes (vérifié en les lançant deux fois de
 # suite) : une revisite déjà notifiée porte `push_envoye_at` et n'est pas
-# reprise. Un rejeu après échec ne double donc pas les envois.
+# reprise, une notification partie porte `envoye_at`. Un rejeu après échec ne
+# double donc pas les envois.
 
 apiVersion: batch/v1
 kind: CronJob
@@ -91,6 +92,73 @@ spec:
               image: ghcr.io/thysmajs/soundreview-worker:PREMIER_DEPLOIEMENT
               imagePullPolicy: Always
               args: ["hebdomadaire"]
+              envFrom:
+                - configMapRef:
+                    name: soundreview-worker-config
+              env:
+                - name: SUPABASE_SERVICE_ROLE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: supabase-service-role-key
+                - name: BREVO_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: brevo-api-key
+                - name: VAPID_PRIVATE_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: vapid-private-key
+                - name: POSTHOG_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: soundreview-secrets
+                      key: posthog-api-key
+                      optional: true
+              resources:
+                requests:
+                  memory: "96Mi"
+                  cpu: "50m"
+                limits:
+                  memory: "256Mi"
+                  cpu: "300m"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: soundreview-notifications
+  namespace: soundreview
+spec:
+  # Toutes les cinq minutes : une demande d'ami annoncée le lendemain
+  # n'intéresse plus personne. C'est la seule tâche de ce rythme — elle ne lit
+  # qu'une file, et ne fait rien quand celle-ci est vide.
+  schedule: "*/5 * * * *"
+  timeZone: Europe/Paris
+  # Un passage qui déborderait sur le suivant enverrait deux fois les mêmes
+  # notifications : `envoye_at` n'est posé qu'après l'envoi.
+  concurrencyPolicy: Forbid
+  # À douze passages par heure, garder l'historique habituel noierait les
+  # autres Jobs du namespace.
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  # Un passage manqué n'est pas rattrapé : le suivant est dans cinq minutes, et
+  # la file, elle, n'a rien perdu.
+  startingDeadlineSeconds: 120
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          imagePullSecrets:
+            - name: ghcr-pull-secret
+          containers:
+            - name: worker
+              image: ghcr.io/thysmajs/soundreview-worker:PREMIER_DEPLOIEMENT
+              imagePullPolicy: Always
+              args: ["notifications"]
               envFrom:
                 - configMapRef:
                     name: soundreview-worker-config
