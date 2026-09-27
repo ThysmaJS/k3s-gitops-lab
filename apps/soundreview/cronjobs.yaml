@@ -36,7 +36,7 @@ spec:
             - name: ghcr-pull-secret
           containers:
             - name: worker
-              image: ghcr.io/thysmajs/soundreview-worker:01dfa87844303fe55c080f9d4a286fca62b06c09
+              image: ghcr.io/thysmajs/soundreview-worker:67cb611db8ab2a79ec2b83c97cba1b1df88a41ee
               imagePullPolicy: Always
               args: ["quotidien"]
               envFrom:
@@ -95,7 +95,7 @@ spec:
             - name: ghcr-pull-secret
           containers:
             - name: worker
-              image: ghcr.io/thysmajs/soundreview-worker:01dfa87844303fe55c080f9d4a286fca62b06c09
+              image: ghcr.io/thysmajs/soundreview-worker:67cb611db8ab2a79ec2b83c97cba1b1df88a41ee
               imagePullPolicy: Always
               args: ["hebdomadaire"]
               envFrom:
@@ -172,7 +172,7 @@ spec:
             - name: ghcr-pull-secret
           containers:
             - name: worker
-              image: ghcr.io/thysmajs/soundreview-worker:01dfa87844303fe55c080f9d4a286fca62b06c09
+              image: ghcr.io/thysmajs/soundreview-worker:67cb611db8ab2a79ec2b83c97cba1b1df88a41ee
               imagePullPolicy: Always
               args: ["notifications"]
               envFrom:
